@@ -48,6 +48,11 @@
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Include"/>
 									<listOptionValue builtIn="false" value="../Drivers/Components/rk043fn48h"/>
 									<listOptionValue builtIn="false" value="../Drivers/Utilities/Fonts"/>
+									<listOptionValue builtIn="false" value="../FreeRTOS/Source"/>
+									<listOptionValue builtIn="false" value="../FreeRTOS/Source/include"/>
+									<listOptionValue builtIn="false" value="../FreeRTOS/Source/portable/GCC/ARM_CM7/r0p1"/>
+									<listOptionValue builtIn="false" value="../FreeRTOS/Source/portable/GCC/MemMang"/>
+									<listOptionValue builtIn="false" value="../FreeRTOS/Source/CMSIS_RTOS_V2"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.115454960" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>
@@ -76,6 +81,7 @@
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="FreeRTOS"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

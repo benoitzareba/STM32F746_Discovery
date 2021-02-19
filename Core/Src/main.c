@@ -19,12 +19,15 @@
 //-----------------------------------------------------------------------------
 // Included file
 //-----------------------------------------------------------------------------
-#include "LCD.h"
 #include "Board.h"
+#include "cmsis_os.h"
 
 //-----------------------------------------------------------------------------
 // Constants : defines and enumerations
 //-----------------------------------------------------------------------------
+#define mainQUEUE_RECEIVE_TASK_PRIORITY      (tskIDLE_PRIORITY + 2)
+#define mainQUEUE_SEND_TASK_PRIORITY         (tskIDLE_PRIORITY + 1)
+#define mainQUEUE_SEND_FREQUENCY_MS          (200 / portTICK_PERIOD_MS)
 
 //-----------------------------------------------------------------------------
 // Structures and types
@@ -43,12 +46,79 @@
 //-----------------------------------------------------------------------------
 
 //---------- Variables ----------
+static osMessageQueueId_t xQueueButtonState = NULL;
+
+osThreadId_t buttonTaskHandle;
+const osThreadAttr_t buttonTaskAttributes = {
+  .name = "buttonTask",
+  .priority = (osPriority_t) osPriorityNormal,
+  .stack_size = 128 * 4
+};
+
+osThreadId_t ledTaskHandle;
+const osThreadAttr_t ledTaskAttributes = {
+  .name = "ledTask",
+  .priority = (osPriority_t) osPriorityNormal,
+  .stack_size = 128 * 4
+};
 
 //---------- Functions ----------
+static void buttonTaskRun  (void *argument);
+static void ledTaskRun     (void *argument);
 
 //=============================================================================
 //--- DEFINITIONS
 //=============================================================================
+
+//-----------------------------------------------------------------------------
+// FONCTION    : buttonTaskRun
+//
+// DESCRIPTION :
+//-----------------------------------------------------------------------------
+static void buttonTaskRun (void *argument)
+{
+   BOOL buttonState = FALSE;
+   BOOL buttonOldState = FALSE;
+
+   //--- Remove compiler warning about unused parameter.
+   (void)argument;
+
+   for ( ;; )
+   {
+      //--- Read button input state
+      buttonState = HAL_GPIO_ReadPin(GPIOI, GPIO_PIN_11);
+
+      if (buttonOldState != buttonState)
+      {
+         buttonOldState = buttonState;
+
+         //--- Send value to queue
+         osMessageQueuePut(xQueueButtonState, &buttonState, 0, 0U);
+      }
+   }
+}
+
+//-----------------------------------------------------------------------------
+// FONCTION    : ledTaskRun
+//
+// DESCRIPTION :
+//-----------------------------------------------------------------------------
+static void ledTaskRun (void *argument)
+{
+   BOOL  receivedButtonState;
+
+   //--- Remove compiler warning about unused parameter.
+   (void)argument;
+
+   for ( ;; )
+   {
+      //--- Wait until something arrives in the queue
+      osMessageQueueGet(xQueueButtonState, &receivedButtonState, NULL, portMAX_DELAY);
+
+      //--- Drive output led pin
+      HAL_GPIO_WritePin(GPIOI, GPIO_PIN_1, receivedButtonState);
+   }
+}
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -62,43 +132,21 @@ int main (void)
    //--- Board configuration
    BOARD_ConfAll();
 
-   //--- LCD Initialization
-   LCD_Init();
-   LCD_LayerDefaultInit(LTDC_ACTIVE_LAYER, LCD_FB_START_ADDRESS);
-   LCD_SelectLayer(LTDC_ACTIVE_LAYER);
+   //--- Initialize scheduler
+   osKernelInitialize();
 
-   //--- Infinite loop
-   while (1)
+   //--- Create the queue
+   xQueueButtonState = osMessageQueueNew(1, sizeof(BOOL), NULL);
+
+   if (xQueueButtonState != NULL)
    {
-      HAL_GPIO_WritePin(GPIOI, GPIO_PIN_1, HAL_GPIO_ReadPin(GPIOI, GPIO_PIN_11));
+      //--- Create the thread(s)
+      buttonTaskHandle  = osThreadNew(buttonTaskRun,  NULL, &buttonTaskAttributes);
+      ledTaskHandle     = osThreadNew(ledTaskRun,     NULL, &ledTaskAttributes);
 
-      LCD_Clear(LCD_COLOR_BLACK);
-      LCD_SetFont(&LCD_DEFAULT_FONT);
-      LCD_SetBackColor(LCD_COLOR_WHITE);
-      LCD_SetTextColor(LCD_COLOR_DARKBLUE);
-
-      LCD_DisplayStringAt(0, 1, (UINT8 *)"MBED EXAMPLE", CENTER_MODE);
-      HAL_Delay(2000);
-
-      LCD_SetBackColor(LCD_COLOR_BLACK);
-      LCD_SetTextColor(LCD_COLOR_ORANGE);
-      LCD_DisplayStringAt(0, 100, (UINT8 *)"DISCOVERY STM32F746NG", CENTER_MODE);
-      HAL_Delay(2000);
-
-      LCD_Clear(LCD_COLOR_GREEN);
-      LCD_SetTextColor(LCD_COLOR_BLUE);
-      LCD_DrawRect(10, 20, 50, 50);
-      LCD_SetTextColor(LCD_COLOR_BROWN);
-      LCD_DrawCircle(80, 80, 50);
-      LCD_SetTextColor(LCD_COLOR_YELLOW);
-      LCD_DrawEllipse(150, 150, 50, 100);
-      LCD_SetTextColor(LCD_COLOR_RED);
-      LCD_FillCircle(200, 200, 40);
-      HAL_Delay(2000);
-
-      LCD_SetBackColor(LCD_COLOR_GREEN);
-      LCD_SetTextColor(LCD_COLOR_CYAN);
-      LCD_DisplayStringAt(0, 6, (UINT8 *)"HAVE FUN !!!", RIGHT_MODE);
-      HAL_Delay(2000);
+      //--- Start scheduler
+      osKernelStart();
    }
+
+   for ( ;; );
 }

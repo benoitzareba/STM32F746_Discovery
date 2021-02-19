@@ -352,7 +352,10 @@ UINT8 LCD_Init (void)
 #endif
 
    //--- Initialize the font
-   //LCD_SetFont(&LCD_DEFAULT_FONT);
+   LCD_SetFont(&LCD_DEFAULT_FONT);
+
+   LCD_LayerDefaultInit(LTDC_ACTIVE_LAYER, LCD_FB_START_ADDRESS);
+   LCD_SelectLayer(LTDC_ACTIVE_LAYER);
 
    return LCD_OK;
 }
