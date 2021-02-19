@@ -59,6 +59,7 @@
 #define LCD_COLOR_TRANSPARENT                ((UINT32)0xFF000000)
 
 #define LCD_DEFAULT_FONT                     Font24
+#define LCD_FONT_16                          Font16
 
 #define LCD_RELOAD_IMMEDIATE                 ((UINT32)LTDC_SRCR_IMR)
 #define LCD_RELOAD_VERTICAL_BLANKING         ((UINT32)LTDC_SRCR_VBR)

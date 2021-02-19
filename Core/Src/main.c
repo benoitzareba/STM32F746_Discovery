@@ -20,7 +20,9 @@
 // Included file
 //-----------------------------------------------------------------------------
 #include "Board.h"
+#include "LCD.h"
 #include "cmsis_os.h"
+#include <stdio.h>
 
 //-----------------------------------------------------------------------------
 // Constants : defines and enumerations
@@ -46,25 +48,34 @@
 //-----------------------------------------------------------------------------
 
 //---------- Variables ----------
-static osMessageQueueId_t xQueueButtonState = NULL;
+static osMessageQueueId_t queueButtonState = NULL;
+static osMessageQueueId_t queueScreenUpdate = NULL;
 
 osThreadId_t buttonTaskHandle;
 const osThreadAttr_t buttonTaskAttributes = {
-  .name = "buttonTask",
-  .priority = (osPriority_t) osPriorityNormal,
-  .stack_size = 128 * 4
+   .name = "buttonTask",
+   .priority = (osPriority_t) osPriorityNormal,
+   .stack_size = 128 * 4
 };
 
 osThreadId_t ledTaskHandle;
 const osThreadAttr_t ledTaskAttributes = {
-  .name = "ledTask",
-  .priority = (osPriority_t) osPriorityNormal,
-  .stack_size = 128 * 4
+   .name = "ledTask",
+   .priority = (osPriority_t) osPriorityNormal,
+   .stack_size = 128 * 4
+};
+
+osThreadId_t screenTaskHandle;
+const osThreadAttr_t screenTaskAttributes = {
+   .name = "screenTask",
+   .priority = (osPriority_t) osPriorityNormal,
+   .stack_size = 128 * 4
 };
 
 //---------- Functions ----------
 static void buttonTaskRun  (void *argument);
 static void ledTaskRun     (void *argument);
+static void screenTaskRun  (void *argument);
 
 //=============================================================================
 //--- DEFINITIONS
@@ -77,8 +88,9 @@ static void ledTaskRun     (void *argument);
 //-----------------------------------------------------------------------------
 static void buttonTaskRun (void *argument)
 {
-   BOOL buttonState = FALSE;
-   BOOL buttonOldState = FALSE;
+   BOOL buttonState     = FALSE;
+   BOOL buttonOldState  = FALSE;
+   BOOL updateScreen    = TRUE;
 
    //--- Remove compiler warning about unused parameter.
    (void)argument;
@@ -93,7 +105,8 @@ static void buttonTaskRun (void *argument)
          buttonOldState = buttonState;
 
          //--- Send value to queue
-         osMessageQueuePut(xQueueButtonState, &buttonState, 0, 0U);
+         osMessageQueuePut(queueButtonState, &buttonState, 0, 0);
+         osMessageQueuePut(queueScreenUpdate, &updateScreen, 0, 0);
       }
    }
 }
@@ -113,10 +126,55 @@ static void ledTaskRun (void *argument)
    for ( ;; )
    {
       //--- Wait until something arrives in the queue
-      osMessageQueueGet(xQueueButtonState, &receivedButtonState, NULL, portMAX_DELAY);
+      osMessageQueueGet(queueButtonState, &receivedButtonState, NULL, portMAX_DELAY);
 
       //--- Drive output led pin
       HAL_GPIO_WritePin(GPIOI, GPIO_PIN_1, receivedButtonState);
+   }
+}
+
+//-----------------------------------------------------------------------------
+// FONCTION    : screenTaskRun
+//
+// DESCRIPTION :
+//-----------------------------------------------------------------------------
+static void screenTaskRun (void *argument)
+{
+   BOOL firstTime = TRUE;
+   BOOL updateScreen = FALSE;
+   UINT16 cptUpdate = 0;
+   STRING_TAB txt;
+
+   //--- Remove compiler warning about unused parameter.
+   (void)argument;
+
+   for ( ;; )
+   {
+      if (firstTime == TRUE)
+      {
+         LCD_Clear(LCD_COLOR_WHITE);
+         LCD_SetFont(&LCD_DEFAULT_FONT);
+         LCD_SetBackColor(LCD_COLOR_WHITE);
+         LCD_SetTextColor(LCD_COLOR_DARKBLUE);
+
+         LCD_DisplayStringAt(0, 1, (UINT8 *)"Hello world ! :-)", CENTER_MODE);
+
+         firstTime = FALSE;
+      }
+      else
+      {
+         //--- Wait until something arrives in the queue
+         osMessageQueueGet(queueScreenUpdate, &updateScreen, NULL, portMAX_DELAY);
+
+         LCD_SetBackColor(LCD_COLOR_WHITE);
+         LCD_SetTextColor(LCD_COLOR_LIGHTBLUE);
+         LCD_SetFont(&LCD_FONT_16);
+
+         sprintf(txt, "Button pressed : %d", cptUpdate);
+         LCD_DisplayStringAt(20, 124, (UINT8 *)txt, LEFT_MODE);
+
+         cptUpdate++;
+      }
    }
 }
 
@@ -136,13 +194,15 @@ int main (void)
    osKernelInitialize();
 
    //--- Create the queue
-   xQueueButtonState = osMessageQueueNew(1, sizeof(BOOL), NULL);
+   queueButtonState  = osMessageQueueNew(1, sizeof(BOOL), NULL);
+   queueScreenUpdate = osMessageQueueNew(1, sizeof(BOOL), NULL);
 
-   if (xQueueButtonState != NULL)
+   if (queueButtonState != NULL && queueScreenUpdate != NULL)
    {
       //--- Create the thread(s)
       buttonTaskHandle  = osThreadNew(buttonTaskRun,  NULL, &buttonTaskAttributes);
       ledTaskHandle     = osThreadNew(ledTaskRun,     NULL, &ledTaskAttributes);
+      screenTaskHandle  = osThreadNew(screenTaskRun,  NULL, &screenTaskAttributes);
 
       //--- Start scheduler
       osKernelStart();
