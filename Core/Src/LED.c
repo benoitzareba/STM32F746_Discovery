@@ -1,14 +1,8 @@
 //=============================================================================
 //
 // PROJECT     :  STM32F746-Discovery
-// MODULE      :  Main.c
+// MODULE      :  LED.c
 // AUTHOR      :  Benoit ZAREBA
-//
-//-----------------------------------------------------------------------------
-//
-// HISTORIC    :
-//
-// 16/02/2021 - V1.0 : Initial revision
 //
 //=============================================================================
 
@@ -17,10 +11,11 @@
 //=============================================================================
 
 //-----------------------------------------------------------------------------
-// Included file
+// Included files
 //-----------------------------------------------------------------------------
-#include "Tasks.h"
+#include "LED.h"
 #include "Board.h"
+#include "Event.h"
 
 //-----------------------------------------------------------------------------
 // Constants : defines and enumerations
@@ -35,6 +30,8 @@
 //-----------------------------------------------------------------------------
 
 //---------- Variables ----------
+osThreadId_t LED_TaskHandle;
+const osThreadAttr_t LED_TaskAttributes = {.name = "ledTask", .priority = (osPriority_t) osPriorityNormal, .stack_size = 128 * 4};
 
 //---------- Functions ----------
 
@@ -51,28 +48,27 @@
 //=============================================================================
 
 //-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-// FONCTION    : main
+// FONCTION    : LED_TaskRun
 //
-// DESCRIPTION :
+// DESCRIPTION : LED task run
 //-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-int main (void)
+void LED_TaskRun (void *argument)
 {
-   //--- Board configuration
-   BOARD_ConfAll();
+   BOOL  receivedButtonState;
+   osStatus_t eventStatus;
 
-   //--- Initialize scheduler
-   osKernelInitialize();
+   //--- Remove compiler warning about unused parameter.
+   (void)argument;
 
-   //--- Create the tasks
-   TASK_Initialize();
+   for ( ;; )
+   {
+      //--- Wait until something arrives in the queue
+      eventStatus = osMessageQueueGet(BUTTON_Event, &receivedButtonState, NULL, portMAX_DELAY);
 
-   //--- Create the events
-   EVENT_Initialize();
-
-   //--- Start scheduler
-   osKernelStart();
-
-   for ( ;; );
+      if (eventStatus == osOK)
+      {
+         //--- Drive output led pin
+         HAL_GPIO_WritePin(GPIOI, GPIO_PIN_1, receivedButtonState);
+      }
+   }
 }

@@ -1,14 +1,8 @@
 //=============================================================================
 //
 // PROJECT     :  STM32F746-Discovery
-// MODULE      :  Main.c
+// MODULE      :  Tasks.c
 // AUTHOR      :  Benoit ZAREBA
-//
-//-----------------------------------------------------------------------------
-//
-// HISTORIC    :
-//
-// 16/02/2021 - V1.0 : Initial revision
 //
 //=============================================================================
 
@@ -17,10 +11,12 @@
 //=============================================================================
 
 //-----------------------------------------------------------------------------
-// Included file
+// Included files
 //-----------------------------------------------------------------------------
 #include "Tasks.h"
-#include "Board.h"
+#include "Screen.h"
+#include "Button.h"
+#include "LED.h"
 
 //-----------------------------------------------------------------------------
 // Constants : defines and enumerations
@@ -51,28 +47,13 @@
 //=============================================================================
 
 //-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-// FONCTION    : main
+// FONCTION    : TASK_Initialize
 //
-// DESCRIPTION :
+// DESCRIPTION : Task initialization
 //-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-int main (void)
+void TASK_Initialize (void)
 {
-   //--- Board configuration
-   BOARD_ConfAll();
-
-   //--- Initialize scheduler
-   osKernelInitialize();
-
-   //--- Create the tasks
-   TASK_Initialize();
-
-   //--- Create the events
-   EVENT_Initialize();
-
-   //--- Start scheduler
-   osKernelStart();
-
-   for ( ;; );
+   SCREEN_TaskHandle = osThreadNew(SCREEN_TaskRun, NULL, &SCREEN_TaskAttributes);
+   BUTTON_TaskHandle = osThreadNew(BUTTON_TaskRun, NULL, &BUTTON_TaskAttributes);
+   LED_TaskHandle    = osThreadNew(LED_TaskRun,    NULL, &LED_TaskAttributes);
 }

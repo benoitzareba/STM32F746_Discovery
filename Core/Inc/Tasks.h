@@ -1,11 +1,11 @@
 //=============================================================================
 //
 // PROJECT     :  STM32F746-Discovery
-// HEADER      :  Board.h
+// HEADER      :  Task.h
 //
 //=============================================================================
-#ifndef _BOARD_H_
-#define _BOARD_H_
+#ifndef _TASKS_H_
+#define _TASKS_H_
 
 //=============================================================================
 //--- DECLARATIONS
@@ -14,21 +14,12 @@
 //-----------------------------------------------------------------------------
 // Included files
 //-----------------------------------------------------------------------------
-#include "stm32f7xx_hal.h"
 #include "TypeDefs.h"
+#include "cmsis_os.h"
 
 //-----------------------------------------------------------------------------
 // Constants : defines and enumerations
 //-----------------------------------------------------------------------------
-#define BOARD_GetSystemClockMHz()         ((UINT16)(SystemCoreClock * (FLOAT32)0.000001))
-
-//--- LED 1
-#define GPIO_LED_1                        GPIOI
-#define GPIO_PIN_LED_1                    1
-
-//--- BUTTON 1
-#define GPIO_BUTTON_1                     GPIOI
-#define GPIO_PIN_BUTTON_1                 11
 
 //-----------------------------------------------------------------------------
 // Structures and types
@@ -41,6 +32,6 @@
 //---------- Variables ----------
 
 //---------- Functions ----------
-void BOARD_ConfAll (void);
+void TASK_Initialize (void);
 
 #endif

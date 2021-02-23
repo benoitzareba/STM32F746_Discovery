@@ -8,6 +8,11 @@
 #define _TYPEDEFS_H_
 
 //-----------------------------------------------------------------------------
+// Included files
+//-----------------------------------------------------------------------------
+#include <stdio.h>
+
+//-----------------------------------------------------------------------------
 // Constants : defines and enumerations
 //-----------------------------------------------------------------------------
 #define GET_MIN(X, Y)                     ((X) < (Y) ? (X) : (Y))
@@ -15,8 +20,8 @@
 #define ARRAY_SIZE(x)                     (sizeof(x) / sizeof((x)[0]))
 #define OUTPUT			                     0
 #define INPUT			                     1
-
 #define MAX_CHARS_STRING                  30
+#define STRING_FORMAT(S, F, ...)          sprintf((S), (const char *)(F), __VA_ARGS__)
 
 //-----------------------------------------------------------------------------
 // Types
@@ -47,7 +52,6 @@ typedef unsigned long int     UINT32;
 typedef unsigned long long    UINT64;
 typedef float                 FLOAT32;
 typedef long double           FLOAT64;
-
 typedef unsigned char         STRING_TAB[MAX_CHARS_STRING];
 
 typedef union //--- u_UINT8

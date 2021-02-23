@@ -1,14 +1,8 @@
 //=============================================================================
 //
 // PROJECT     :  STM32F746-Discovery
-// MODULE      :  Main.c
+// MODULE      :  Event.c
 // AUTHOR      :  Benoit ZAREBA
-//
-//-----------------------------------------------------------------------------
-//
-// HISTORIC    :
-//
-// 16/02/2021 - V1.0 : Initial revision
 //
 //=============================================================================
 
@@ -17,14 +11,18 @@
 //=============================================================================
 
 //-----------------------------------------------------------------------------
-// Included file
+// Included files
 //-----------------------------------------------------------------------------
-#include "Tasks.h"
-#include "Board.h"
+#include "Event.h"
 
 //-----------------------------------------------------------------------------
 // Constants : defines and enumerations
 //-----------------------------------------------------------------------------
+#define BUTTON_EVENT_BUFFER_SIZE          1
+#define SCREEN_EVENT_BUFFER_SIZE          1
+
+#define BUTTON_EVENT_SIZE                 sizeof(BOOL)
+#define SCREEN_EVENT_SIZE                 sizeof(BOOL)
 
 //-----------------------------------------------------------------------------
 // Structures and types
@@ -43,6 +41,8 @@
 //-----------------------------------------------------------------------------
 
 //---------- Variables ----------
+osMessageQueueId_t BUTTON_Event = NULL;
+osMessageQueueId_t SCREEN_Event = NULL;
 
 //---------- Functions ----------
 
@@ -51,28 +51,13 @@
 //=============================================================================
 
 //-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-// FONCTION    : main
+// FONCTION    : EVENT_Initialize
 //
-// DESCRIPTION :
+// DESCRIPTION : Event initialization
 //-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-int main (void)
+void EVENT_Initialize (void)
 {
-   //--- Board configuration
-   BOARD_ConfAll();
-
-   //--- Initialize scheduler
-   osKernelInitialize();
-
-   //--- Create the tasks
-   TASK_Initialize();
-
-   //--- Create the events
-   EVENT_Initialize();
-
-   //--- Start scheduler
-   osKernelStart();
-
-   for ( ;; );
+   //--- Create the queue
+   BUTTON_Event = osMessageQueueNew(BUTTON_EVENT_BUFFER_SIZE, BUTTON_EVENT_SIZE, NULL);
+   SCREEN_Event = osMessageQueueNew(SCREEN_EVENT_BUFFER_SIZE, SCREEN_EVENT_SIZE, NULL);
 }

@@ -1,14 +1,8 @@
 //=============================================================================
 //
 // PROJECT     :  STM32F746-Discovery
-// MODULE      :  Main.c
+// MODULE      :  Button.c
 // AUTHOR      :  Benoit ZAREBA
-//
-//-----------------------------------------------------------------------------
-//
-// HISTORIC    :
-//
-// 16/02/2021 - V1.0 : Initial revision
 //
 //=============================================================================
 
@@ -17,10 +11,11 @@
 //=============================================================================
 
 //-----------------------------------------------------------------------------
-// Included file
+// Included files
 //-----------------------------------------------------------------------------
-#include "Tasks.h"
+#include "Button.h"
 #include "Board.h"
+#include "Event.h"
 
 //-----------------------------------------------------------------------------
 // Constants : defines and enumerations
@@ -35,6 +30,8 @@
 //-----------------------------------------------------------------------------
 
 //---------- Variables ----------
+osThreadId_t BUTTON_TaskHandle;
+const osThreadAttr_t BUTTON_TaskAttributes   = {.name = "buttonTask",      .priority = (osPriority_t) osPriorityNormal,    .stack_size = 128 * 4};
 
 //---------- Functions ----------
 
@@ -51,28 +48,33 @@
 //=============================================================================
 
 //-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-// FONCTION    : main
+// FONCTION    : BUTTON_TaskRun
 //
-// DESCRIPTION :
+// DESCRIPTION : Button task run
 //-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-int main (void)
+void BUTTON_TaskRun (void *argument)
 {
-   //--- Board configuration
-   BOARD_ConfAll();
+   BOOL buttonState     = FALSE;
+   BOOL buttonOldState  = FALSE;
+   BOOL updateScreen    = TRUE;
 
-   //--- Initialize scheduler
-   osKernelInitialize();
+   //--- Remove compiler warning about unused parameter.
+   (void)argument;
 
-   //--- Create the tasks
-   TASK_Initialize();
+   for ( ;; )
+   {
+      //--- Read button input state
+      buttonState = HAL_GPIO_ReadPin(GPIOI, GPIO_PIN_11);
 
-   //--- Create the events
-   EVENT_Initialize();
+      if (buttonOldState != buttonState)
+      {
+         buttonOldState = buttonState;
 
-   //--- Start scheduler
-   osKernelStart();
+         //--- Send value to queue
+         osMessageQueuePut(BUTTON_Event, &buttonState, 0, 0);
 
-   for ( ;; );
+         if (buttonState == TRUE)
+            osMessageQueuePut(SCREEN_Event, &updateScreen, 0, 0);
+      }
+   }
 }
