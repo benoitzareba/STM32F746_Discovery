@@ -1,10 +1,11 @@
 //=============================================================================
 //
 // PROJECT     :  STM32F746-Discovery
-// MODULE      :  Tasks.c
-// AUTHOR      :  Benoit ZAREBA
+// HEADER      :  Display.h
 //
 //=============================================================================
+#ifndef _DISPLAY_H_
+#define _DISPLAY_H_
 
 //=============================================================================
 //--- DECLARATIONS
@@ -13,10 +14,7 @@
 //-----------------------------------------------------------------------------
 // Included files
 //-----------------------------------------------------------------------------
-#include "Tasks.h"
-#include "Screen.h"
-#include "Button.h"
-#include "LED.h"
+#include "TypeDefs.h"
 
 //-----------------------------------------------------------------------------
 // Constants : defines and enumerations
@@ -34,32 +32,4 @@
 
 //---------- Functions ----------
 
-//-----------------------------------------------------------------------------
-// Private variables and functions
-//-----------------------------------------------------------------------------
-
-//---------- Variables ----------
-
-//---------- Functions ----------
-
-//=============================================================================
-//--- DEFINITIONS
-//=============================================================================
-
-//-----------------------------------------------------------------------------
-// FONCTION    : TASK_Initialize
-//
-// DESCRIPTION : Task initialization
-//-----------------------------------------------------------------------------
-void TASK_Initialize (void)
-{
-   //--- Screen task
-   SCREEN_Initialize();
-   SCREEN_TaskHandle = osThreadNew(SCREEN_TaskRun, NULL, &SCREEN_TaskAttributes);
-
-   //--- Push buttons task
-   BUTTON_TaskHandle = osThreadNew(BUTTON_TaskRun, NULL, &BUTTON_TaskAttributes);
-
-   //--- Leds task
-   LED_TaskHandle    = osThreadNew(LED_TaskRun,    NULL, &LED_TaskAttributes);
-}
+#endif

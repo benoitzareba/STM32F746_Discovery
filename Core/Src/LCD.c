@@ -1052,7 +1052,7 @@ void LCD_DrawRect (UINT16 Xpos, UINT16 Ypos, UINT16 Width, UINT16 Height)
 
    //--- Draw vertical lines
    LCD_DrawVLine(Xpos, Ypos, Height);
-   LCD_DrawVLine((Xpos + Width), Ypos, Height);
+   LCD_DrawVLine((Xpos + Width), Ypos, Height + 1);
 }
 
 //-----------------------------------------------------------------------------
@@ -1620,4 +1620,53 @@ __weak void LCD_ClockConfig (LTDC_HandleTypeDef *hltdc, void *Params)
    periph_clk_init_struct.PLLSAI.PLLSAIR         = RK043FN48H_FREQUENCY_DIVIDER;
    periph_clk_init_struct.PLLSAIDivR             = RCC_PLLSAIDIVR_4;
    HAL_RCCEx_PeriphCLKConfig(&periph_clk_init_struct);
+}
+
+//-----------------------------------------------------------------------------
+// FONCTION    : LCD_DrawRectWithThickness
+//
+// DESCRIPTION : Draw rectangle with thickness
+//-----------------------------------------------------------------------------
+void LCD_DrawRectWithThickness (UINT16 xPos, UINT16 yPos, UINT16 width, UINT16 height, UINT8 thickness)
+{
+   UINT8 i;
+
+   for (i = 0; i < thickness; i++)
+      LCD_DrawRect(xPos + i, yPos + i, width - i * 2, height - i * 2);
+}
+
+//-----------------------------------------------------------------------------
+// FONCTION    : LCD_DrawRectButton
+//
+// DESCRIPTION : Draw rectangle button
+//-----------------------------------------------------------------------------
+void LCD_DrawRectButton (UINT16 xPos, UINT16 yPos, UINT16 width, UINT16 height, UINT32 color, UINT8 *txt)
+{
+   UINT8 strSize = 0;
+
+   LCD_SetTextColor(color);
+   LCD_DrawHLineThickness(xPos, yPos + height - 9, width, 10);
+
+   LCD_SetFont(&LCD_FONT_16);
+
+   LCD_SetTextColor(LCD_COLOR_LIGHTGRAY);
+
+   strSize = STRING_LEN(txt);
+   LCD_SetBackColor(LCD_COLOR_BACKGROUND_ITEM);
+   LCD_DisplayStringAt(xPos + ((width / 2) - ((LCD_FONT_16.Width * strSize) / 2)), yPos + (LCD_FONT_16.Height / 2) + 10, txt, LEFT_MODE);
+}
+
+//-----------------------------------------------------------------------------
+// FONCTION    : LCD_DrawHLineThickness
+//
+// DESCRIPTION : Draw horizontal line with thickness
+//-----------------------------------------------------------------------------
+void LCD_DrawHLineThickness (UINT16 Xpos, UINT16 Ypos, UINT16 Length, UINT8 Thickness)
+{
+   UINT8 i;
+
+   for (i = 0; i < Thickness; i++)
+   {
+      LCD_DrawHLine(Xpos, Ypos + i, Length);
+   }
 }

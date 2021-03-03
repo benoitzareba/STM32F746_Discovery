@@ -30,7 +30,6 @@
 #define LCD_ERROR                            ((UINT8)0x01)
 #define LCD_TIMEOUT                          ((UINT8)0x02)
 #define LCD_FB_START_ADDRESS                 ((UINT32)0xC0000000)
-
 #define LCD_COLOR_BLUE                       ((UINT32)0xFF0000FF)
 #define LCD_COLOR_GREEN                      ((UINT32)0xFF00FF00)
 #define LCD_COLOR_RED                        ((UINT32)0xFFFF0000)
@@ -57,9 +56,15 @@
 #define LCD_COLOR_BROWN                      ((UINT32)0xFFA52A2A)
 #define LCD_COLOR_ORANGE                     ((UINT32)0xFFFFA500)
 #define LCD_COLOR_TRANSPARENT                ((UINT32)0xFF000000)
+#define LCD_COLOR_BACKGROUND_PAGE            ((UINT32)0xFF27303A)
+#define LCD_COLOR_BACKGROUND_ITEM            ((UINT32)0xFF373D44)
 
-#define LCD_DEFAULT_FONT                     Font24
+#define LCD_FONT_24                          Font24
+#define LCD_FONT_20                          Font20
 #define LCD_FONT_16                          Font16
+#define LCD_FONT_12                          Font12
+#define LCD_FONT_8                           Font8
+#define LCD_DEFAULT_FONT                     LCD_FONT_24
 
 #define LCD_RELOAD_IMMEDIATE                 ((UINT32)LTDC_SRCR_IMR)
 #define LCD_RELOAD_VERTICAL_BLANKING         ((UINT32)LTDC_SRCR_VBR)
@@ -158,5 +163,9 @@ void     LCD_DisplayOn                 (void);
 void     LCD_MspInit                   (LTDC_HandleTypeDef *hltdc, void *Params);
 void     LCD_MspDeInit                 (LTDC_HandleTypeDef *hltdc, void *Params);
 void     LCD_ClockConfig               (LTDC_HandleTypeDef *hltdc, void *Params);
+void     LCD_DrawRectWithThickness     (UINT16 Xpos, UINT16 Ypos, UINT16 Width, UINT16 Height, UINT8 Thickness);
+void     LCD_DrawRectButton            (UINT16 Xpos, UINT16 Ypos, UINT16 Width, UINT16 Height, UINT32 color, UINT8 *txt);
+void     LCD_DrawHLineThickness        (UINT16 Xpos, UINT16 Ypos, UINT16 Length, UINT8 Thickness);
+
 
 #endif

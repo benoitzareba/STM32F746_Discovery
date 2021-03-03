@@ -11,6 +11,7 @@
 // Included files
 //-----------------------------------------------------------------------------
 #include <stdio.h>
+#include <string.h>
 
 //-----------------------------------------------------------------------------
 // Constants : defines and enumerations
@@ -22,6 +23,8 @@
 #define INPUT			                     1
 #define MAX_CHARS_STRING                  30
 #define STRING_FORMAT(S, F, ...)          sprintf((S), (const char *)(F), __VA_ARGS__)
+#define STRING_COPY(D,S)                  strcpy((char *)(D), (const char *)(S))
+#define STRING_LEN(S)                     strlen((char *)(S))
 
 //-----------------------------------------------------------------------------
 // Types
@@ -52,7 +55,7 @@ typedef unsigned long int     UINT32;
 typedef unsigned long long    UINT64;
 typedef float                 FLOAT32;
 typedef long double           FLOAT64;
-typedef unsigned char         STRING_TAB[MAX_CHARS_STRING];
+typedef char                  STRING_TAB[MAX_CHARS_STRING];
 
 typedef union //--- u_UINT8
 {
