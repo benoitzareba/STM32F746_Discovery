@@ -15,6 +15,7 @@
 // Included files
 //-----------------------------------------------------------------------------
 #include "TypeDefs.h"
+#include "Screen.h"
 
 //-----------------------------------------------------------------------------
 // Constants : defines and enumerations
@@ -31,5 +32,7 @@
 //---------- Variables ----------
 
 //---------- Functions ----------
+void DISP_ShowHeader (s_HEADER* h);
+void DISP_ShowFooter (s_FOOTER* f);
 
 #endif

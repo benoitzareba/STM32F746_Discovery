@@ -1640,16 +1640,27 @@ void LCD_DrawRectWithThickness (UINT16 xPos, UINT16 yPos, UINT16 width, UINT16 h
 //
 // DESCRIPTION : Draw rectangle button
 //-----------------------------------------------------------------------------
-void LCD_DrawRectButton (UINT16 xPos, UINT16 yPos, UINT16 width, UINT16 height, UINT32 color, UINT8 *txt)
+void LCD_DrawRectButton (UINT16 xPos, UINT16 yPos, UINT16 width, UINT16 height, UINT32 color, CHAR8 *txt, BOOL selected)
 {
    UINT8 strSize = 0;
+   UINT8 thickness = 10;
 
    LCD_SetTextColor(color);
-   LCD_DrawHLineThickness(xPos, yPos + height - 9, width, 10);
+
+   if (selected == TRUE)
+   {
+      yPos -= 15;
+      thickness = 25;
+   }
+
+   LCD_DrawHLineThickness(xPos, yPos + height - 9, width, thickness);
 
    LCD_SetFont(&LCD_FONT_16);
 
    LCD_SetTextColor(LCD_COLOR_LIGHTGRAY);
+
+   if (selected == TRUE)
+      yPos += 5;
 
    strSize = STRING_LEN(txt);
    LCD_SetBackColor(LCD_COLOR_BACKGROUND_ITEM);

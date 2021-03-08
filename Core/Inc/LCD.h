@@ -164,7 +164,7 @@ void     LCD_MspInit                   (LTDC_HandleTypeDef *hltdc, void *Params)
 void     LCD_MspDeInit                 (LTDC_HandleTypeDef *hltdc, void *Params);
 void     LCD_ClockConfig               (LTDC_HandleTypeDef *hltdc, void *Params);
 void     LCD_DrawRectWithThickness     (UINT16 Xpos, UINT16 Ypos, UINT16 Width, UINT16 Height, UINT8 Thickness);
-void     LCD_DrawRectButton            (UINT16 Xpos, UINT16 Ypos, UINT16 Width, UINT16 Height, UINT32 color, UINT8 *txt);
+void     LCD_DrawRectButton            (UINT16 Xpos, UINT16 Ypos, UINT16 Width, UINT16 Height, UINT32 color, CHAR8 *txt, BOOL selected);
 void     LCD_DrawHLineThickness        (UINT16 Xpos, UINT16 Ypos, UINT16 Length, UINT8 Thickness);
 
 

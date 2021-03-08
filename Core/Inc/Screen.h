@@ -28,7 +28,6 @@ enum
    SCREEN_2,
    SCREEN_3,
    SCREEN_4,
-   SCREEN_5,
 
    NB_SCREEN
 };
@@ -43,6 +42,8 @@ enum
    MAX_SCREEN_STATES
 };
 
+#define NB_BUTTON_MAX                  4
+
 //-----------------------------------------------------------------------------
 // Structures and types
 //-----------------------------------------------------------------------------
@@ -51,9 +52,26 @@ typedef BOOL (* SCREEN_UPDATE_FUNC)    (void *, void *);
 
 typedef struct //--- s_HEADER
 {
-   STRING title;
-   STRING description;
-};
+   STRING_TAB  title;
+   STRING_TAB  description;
+   UINT32      color;
+} s_HEADER;
+
+typedef struct //--- s_BUTTON
+{
+   UINT8 position;
+   BOOL selected;
+   UINT32 color;
+   STRING_TAB txt;
+   STRING_TAB function;
+} s_BUTTON;
+
+typedef struct //--- s_FOOTER
+{
+   UINT8 nbButton;
+   UINT32 color;
+   s_BUTTON button[NB_BUTTON_MAX];
+} s_FOOTER;
 
 typedef struct //--- s_SCREEN
 {
@@ -62,10 +80,11 @@ typedef struct //--- s_SCREEN
    UINT8                state;
    SCREEN_DISP_FUNC     disp;
    SCREEN_UPDATE_FUNC   update;
+   UINT32               color;
    s_HEADER             *header;
+   s_FOOTER             *footer;
    //s_POPUP              *popup;
 } s_SCREEN;
-
 
 //-----------------------------------------------------------------------------
 // External variables and functions
@@ -88,11 +107,8 @@ BOOL SCREEN_UpdateScr3  (void *p, void *e);
 BOOL SCREEN_DispScr4    (void *p);
 BOOL SCREEN_UpdateScr4  (void *p, void *e);
 
-BOOL SCREEN_DispScr5    (void *p);
-BOOL SCREEN_UpdateScr5  (void *p, void *e);
-
 BOOL SCREEN_LoadNext    (s_SCREEN *s, UINT8 idScr);
-BOOL SCREEN_Display     (s_SCREEN* p);
+BOOL SCREEN_Display     (s_SCREEN* s);
 
 void SCREEN_Initialize  (void);
 void SCREEN_TaskRun     (void *argument);
