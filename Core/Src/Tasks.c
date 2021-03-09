@@ -17,6 +17,7 @@
 #include "Screen.h"
 #include "Button.h"
 #include "LED.h"
+#include "Touchscreen.h"
 
 //-----------------------------------------------------------------------------
 // Constants : defines and enumerations
@@ -56,6 +57,10 @@ void TASK_Initialize (void)
    //--- Screen task
    SCREEN_Initialize();
    SCREEN_TaskHandle = osThreadNew(SCREEN_TaskRun, NULL, &SCREEN_TaskAttributes);
+
+   //--- Touch screen task
+   TOUCH_Initialize(LCD_GetXSize(), LCD_GetYSize());
+   TOUCH_TaskHandle = osThreadNew(TOUCH_TaskRun, NULL, &TOUCH_TaskAttributes);
 
    //--- Push buttons task
    BUTTON_TaskHandle = osThreadNew(BUTTON_TaskRun, NULL, &BUTTON_TaskAttributes);

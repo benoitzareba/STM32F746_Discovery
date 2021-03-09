@@ -30,7 +30,7 @@
 //-----------------------------------------------------------------------------
 
 //---------- Variables ----------
-osThreadId_t LED_TaskHandle;
+osThreadId_t         LED_TaskHandle;
 const osThreadAttr_t LED_TaskAttributes = {.name = "ledTask", .priority = (osPriority_t) osPriorityNormal, .stack_size = 128 * 4};
 
 //---------- Functions ----------

@@ -16,6 +16,7 @@
 //-----------------------------------------------------------------------------
 #include "TypeDefs.h"
 #include "cmsis_os.h"
+#include "LCD.h"
 
 //-----------------------------------------------------------------------------
 // Constants : defines and enumerations
@@ -52,25 +53,34 @@ typedef BOOL (* SCREEN_UPDATE_FUNC)    (void *, void *);
 
 typedef struct //--- s_HEADER
 {
-   STRING_TAB  title;
-   STRING_TAB  description;
-   UINT32      color;
+   STRING_TAB     title;
+   STRING_TAB     description;
+   UINT32         color;
 } s_HEADER;
+
+typedef struct //--- s_POSITION
+{
+   UINT16               x;
+   UINT16               y;
+   UINT16               width;
+   UINT16               height;
+} s_COORDINATES;
 
 typedef struct //--- s_BUTTON
 {
-   UINT8 position;
-   BOOL selected;
-   UINT32 color;
-   STRING_TAB txt;
-   STRING_TAB function;
+   UINT8                position;
+   BOOL                 selected;
+   UINT32               color;
+   STRING_TAB           txt;
+   STRING_TAB           function;
+   s_COORDINATES        coordinates;
 } s_BUTTON;
 
 typedef struct //--- s_FOOTER
 {
-   UINT8 nbButton;
-   UINT32 color;
-   s_BUTTON button[NB_BUTTON_MAX];
+   UINT8                nbButton;
+   UINT32               color;
+   s_BUTTON             button[NB_BUTTON_MAX];
 } s_FOOTER;
 
 typedef struct //--- s_SCREEN
@@ -83,7 +93,7 @@ typedef struct //--- s_SCREEN
    UINT32               color;
    s_HEADER             *header;
    s_FOOTER             *footer;
-   //s_POPUP              *popup;
+   //s_POPUP             *popup;
 } s_SCREEN;
 
 //-----------------------------------------------------------------------------

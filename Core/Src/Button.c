@@ -30,7 +30,7 @@
 //-----------------------------------------------------------------------------
 
 //---------- Variables ----------
-osThreadId_t BUTTON_TaskHandle;
+osThreadId_t         BUTTON_TaskHandle;
 const osThreadAttr_t BUTTON_TaskAttributes   = {.name = "buttonTask",      .priority = (osPriority_t) osPriorityNormal,    .stack_size = 128 * 4};
 
 //---------- Functions ----------
@@ -56,7 +56,6 @@ void BUTTON_TaskRun (void *argument)
 {
    BOOL buttonState     = FALSE;
    BOOL buttonOldState  = FALSE;
-   BOOL updateScreen    = TRUE;
 
    //--- Remove compiler warning about unused parameter.
    (void)argument;
@@ -64,7 +63,7 @@ void BUTTON_TaskRun (void *argument)
    for ( ;; )
    {
       //--- Read button input state
-      buttonState = HAL_GPIO_ReadPin(GPIOI, GPIO_PIN_11);
+      buttonState = HAL_GPIO_ReadPin(GPIO_BUTTON_1, GPIO_PIN_BUTTON_1);
 
       if (buttonOldState != buttonState)
       {
@@ -72,9 +71,6 @@ void BUTTON_TaskRun (void *argument)
 
          //--- Send value to queue
          osMessageQueuePut(BUTTON_Event, &buttonState, 0, 0);
-
-         if (buttonState == TRUE)
-            osMessageQueuePut(SCREEN_Event, &updateScreen, 0, 0);
       }
    }
 }

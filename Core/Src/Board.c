@@ -14,7 +14,6 @@
 // Included files
 //-----------------------------------------------------------------------------
 #include "Board.h"
-#include "LCD.h"
 
 //-----------------------------------------------------------------------------
 // Constants : defines and enumerations
@@ -151,7 +150,4 @@ void BOARD_ConfAll (void)
 
    //--- Initialize all configured peripherals
    _GPIOInit();
-
-   //--- LCD Initialization
-   LCD_Init();
 }

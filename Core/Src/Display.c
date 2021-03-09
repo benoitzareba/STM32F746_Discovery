@@ -89,11 +89,12 @@ void DISP_ShowFooter (s_FOOTER* f)
 {
    UINT8 i;
    s_BUTTON *b = NULL;
+   s_COORDINATES *c = NULL;
 
    const UINT8 buttonXPosition   = 0;
    const UINT8 buttonYPosition   = LCD_GetYSize() - 50;
    const UINT8 buttonWidth       = 112;
-   const UINT8 buttonHeight      = 51;
+   const UINT8 buttonHeight      = 50;
 
    //--- Footer
    LCD_SetTextColor(f->color);
@@ -104,8 +105,16 @@ void DISP_ShowFooter (s_FOOTER* f)
 
    for (i = 0; i < f->nbButton; i++)
    {
+      //--- Init pointer
       b = &f->button[i];
+      c = &f->button[i].coordinates;
 
-      LCD_DrawRectButton(buttonXPosition + buttonWidth * b->position + 10 * b->position, buttonYPosition, buttonWidth, buttonHeight, b->color, (CHAR8*)b->txt, b->selected);
+      //--- Determine les coordonnees
+      c->width    = buttonWidth;
+      c->height   = buttonHeight;
+      c->x        = buttonXPosition + buttonWidth * b->position + 10 * b->position;
+      c->y        = buttonYPosition;
+
+      LCD_DrawRectButton(c->x, c->y, buttonWidth, buttonHeight, b->color, (CHAR8*)b->txt, b->selected);
    }
 }

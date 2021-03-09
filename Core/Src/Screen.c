@@ -32,7 +32,7 @@
 //-----------------------------------------------------------------------------
 
 //---------- Variables ----------
-osThreadId_t SCREEN_TaskHandle;
+osThreadId_t         SCREEN_TaskHandle;
 const osThreadAttr_t SCREEN_TaskAttributes = {.name = "screenTask", .priority = (osPriority_t) osPriorityNormal, .stack_size = 128 * 4};
 
 //---------- Functions ----------
@@ -67,10 +67,10 @@ static s_FOOTER   _footer[] = {
                                     0,
                                     LCD_COLOR_TRANSPARENT,
                                     {
-                                       {0, FALSE, LCD_COLOR_TRANSPARENT, "", ""},
-                                       {0, FALSE, LCD_COLOR_TRANSPARENT, "", ""},
-                                       {0, FALSE, LCD_COLOR_TRANSPARENT, "", ""},
-                                       {0, FALSE, LCD_COLOR_TRANSPARENT, "", ""},
+                                       {0, FALSE, LCD_COLOR_TRANSPARENT, "", "", {0, 0, 0, 0}},
+                                       {0, FALSE, LCD_COLOR_TRANSPARENT, "", "", {0, 0, 0, 0}},
+                                       {0, FALSE, LCD_COLOR_TRANSPARENT, "", "", {0, 0, 0, 0}},
+                                       {0, FALSE, LCD_COLOR_TRANSPARENT, "", "", {0, 0, 0, 0}},
                                     }
                                  },
 
@@ -80,10 +80,10 @@ static s_FOOTER   _footer[] = {
                                     4,
                                     LCD_COLOR_LIGHTCYAN,
                                     {
-                                       {0, FALSE, LCD_COLOR_LIGHTCYAN,   "Screen 1" , "DispScreen1" },
-                                       {1, FALSE, LCD_COLOR_LIGHTGREEN,  "Screen 2" , "DispScreen2" },
-                                       {2, FALSE, LCD_COLOR_LIGHTYELLOW, "Screen 3" , "DispScreen3" },
-                                       {3, FALSE, LCD_COLOR_LIGHTRED,    "Screen 4" , "DispScreen4" },
+                                       {0, FALSE, LCD_COLOR_LIGHTCYAN,   "Screen 1" , "DispScreen1", {0, 0, 0, 0}},
+                                       {1, FALSE, LCD_COLOR_LIGHTGREEN,  "Screen 2" , "DispScreen2", {0, 0, 0, 0}},
+                                       {2, FALSE, LCD_COLOR_LIGHTYELLOW, "Screen 3" , "DispScreen3", {0, 0, 0, 0}},
+                                       {3, FALSE, LCD_COLOR_LIGHTRED,    "Screen 4" , "DispScreen4", {0, 0, 0, 0}},
                                     }
                                  },
 
@@ -92,10 +92,10 @@ static s_FOOTER   _footer[] = {
                                     4,
                                     LCD_COLOR_LIGHTGREEN,
                                     {
-                                       {0, FALSE, LCD_COLOR_LIGHTCYAN,   "Screen 1" , "DispScreen1" },
-                                       {1, FALSE, LCD_COLOR_LIGHTGREEN,  "Screen 2" , "DispScreen2" },
-                                       {2, FALSE, LCD_COLOR_LIGHTYELLOW, "Screen 3" , "DispScreen3" },
-                                       {3, FALSE, LCD_COLOR_LIGHTRED,    "Screen 4" , "DispScreen4" },
+                                       {0, FALSE, LCD_COLOR_LIGHTCYAN,   "Screen 1" , "DispScreen1", {0, 0, 0, 0}},
+                                       {1, FALSE, LCD_COLOR_LIGHTGREEN,  "Screen 2" , "DispScreen2", {0, 0, 0, 0}},
+                                       {2, FALSE, LCD_COLOR_LIGHTYELLOW, "Screen 3" , "DispScreen3", {0, 0, 0, 0}},
+                                       {3, FALSE, LCD_COLOR_LIGHTRED,    "Screen 4" , "DispScreen4", {0, 0, 0, 0}},
                                     }
                                  },
 
@@ -104,10 +104,10 @@ static s_FOOTER   _footer[] = {
                                     4,
                                     LCD_COLOR_LIGHTYELLOW,
                                     {
-                                       {0, FALSE, LCD_COLOR_LIGHTCYAN,   "Screen 1" , "DispScreen1" },
-                                       {1, FALSE, LCD_COLOR_LIGHTGREEN,  "Screen 2" , "DispScreen2" },
-                                       {2, FALSE, LCD_COLOR_LIGHTYELLOW, "Screen 3" , "DispScreen3" },
-                                       {3, FALSE, LCD_COLOR_LIGHTRED,    "Screen 4" , "DispScreen4" },
+                                       {0, FALSE, LCD_COLOR_LIGHTCYAN,   "Screen 1" , "DispScreen1", {0, 0, 0, 0}},
+                                       {1, FALSE, LCD_COLOR_LIGHTGREEN,  "Screen 2" , "DispScreen2", {0, 0, 0, 0}},
+                                       {2, FALSE, LCD_COLOR_LIGHTYELLOW, "Screen 3" , "DispScreen3", {0, 0, 0, 0}},
+                                       {3, FALSE, LCD_COLOR_LIGHTRED,    "Screen 4" , "DispScreen4", {0, 0, 0, 0}},
                                     }
                                  },
 
@@ -116,10 +116,10 @@ static s_FOOTER   _footer[] = {
                                     4,
                                     LCD_COLOR_LIGHTRED,
                                     {
-                                       {0, FALSE, LCD_COLOR_LIGHTCYAN,   "Screen 1" , "DispScreen1" },
-                                       {1, FALSE, LCD_COLOR_LIGHTGREEN,  "Screen 2" , "DispScreen2" },
-                                       {2, FALSE, LCD_COLOR_LIGHTYELLOW, "Screen 3" , "DispScreen3" },
-                                       {3, FALSE, LCD_COLOR_LIGHTRED,    "Screen 4" , "DispScreen4" },
+                                       {0, FALSE, LCD_COLOR_LIGHTCYAN,   "Screen 1" , "DispScreen1", {0, 0, 0, 0}},
+                                       {1, FALSE, LCD_COLOR_LIGHTGREEN,  "Screen 2" , "DispScreen2", {0, 0, 0, 0}},
+                                       {2, FALSE, LCD_COLOR_LIGHTYELLOW, "Screen 3" , "DispScreen3", {0, 0, 0, 0}},
+                                       {3, FALSE, LCD_COLOR_LIGHTRED,    "Screen 4" , "DispScreen4", {0, 0, 0, 0}},
                                     }
                                  },
                               };
@@ -412,8 +412,13 @@ BOOL SCREEN_Display (s_SCREEN* s)
 //-----------------------------------------------------------------------------
 void SCREEN_Initialize (void)
 {
+   //--- LCD Initialization
+   LCD_Init();
+
+   //--- Clear
    LCD_Clear(LCD_COLOR_BACKGROUND_PAGE);
 
+   //--- Load first screen
    SCREEN_LoadNext(&_curScr, SCREEN_1);
 }
 
@@ -424,28 +429,25 @@ void SCREEN_Initialize (void)
 //-----------------------------------------------------------------------------
 void SCREEN_TaskRun (void *argument)
 {
-   osStatus_t  eventStatus;
-   BOOL        receivedButtonState;
-
-   static UINT8 _idScr = SCREEN_1;
+   UINT8 newScrId;
+   osStatus_t eventStatus;
 
    //--- Remove compiler warning about unused parameter.
    (void)argument;
 
    for ( ;; )
    {
-      //--- Wait until something arrives in the queue
-      eventStatus = osMessageQueueGet(SCREEN_Event, &receivedButtonState, NULL, 0);
-
+      //--- Evenement changement d'ecran
+      eventStatus = osMessageQueueGet(CHANGE_SCREEN_Event, &newScrId, NULL, 0);
       if (eventStatus == osOK)
       {
-         _idScr++;
-         _idScr %= NB_SCREEN;
-         if (_idScr == NO_SCREEN)
-            _idScr = SCREEN_1;
-         //--- Drive output led pin
-         SCREEN_LoadNext(&_curScr, _idScr);
+         //--- Si l'index de l'ecran est different
+         if (newScrId != _curScr.idScr)
+            SCREEN_LoadNext(&_curScr, newScrId);
       }
+
+      //--- Send current screen to touchscreen task
+      osMessageQueuePut(SCREEN_Event, &_curScr, 0, 0);
 
       SCREEN_Display(&_curScr);
 
