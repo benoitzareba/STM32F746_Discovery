@@ -1,11 +1,10 @@
 //=============================================================================
 //
 // PROJECT     :  STM32F746-Discovery
-// HEADER      :  Event.h
+// MODULE      :  Utils.c
+// AUTHOR      :  Benoit ZAREBA
 //
 //=============================================================================
-#ifndef _EVENT_H_
-#define _EVENT_H_
 
 //=============================================================================
 //--- DECLARATIONS
@@ -14,8 +13,7 @@
 //-----------------------------------------------------------------------------
 // Included files
 //-----------------------------------------------------------------------------
-#include "TypeDefs.h"
-#include "cmsis_os.h"
+#include "Utils.h"
 
 //-----------------------------------------------------------------------------
 // Constants : defines and enumerations
@@ -30,12 +28,42 @@
 //-----------------------------------------------------------------------------
 
 //---------- Variables ----------
-extern osMessageQueueId_t BUTTON_Event;
-extern osMessageQueueId_t SCREEN_Event;
-extern osMessageQueueId_t CHANGE_SCREEN_Event;
-extern osMessageQueueId_t POPUP_Event;
 
 //---------- Functions ----------
-void EVENT_Initialize (void);
 
-#endif
+//-----------------------------------------------------------------------------
+// Private variables and functions
+//-----------------------------------------------------------------------------
+
+//---------- Variables ----------
+
+
+//---------- Functions ----------
+
+//=============================================================================
+//--- DEFINITIONS
+//=============================================================================
+
+//-----------------------------------------------------------------------------
+// FONCTION    :  UTILS_CalcHash
+//
+// DESCRIPTION :
+//-----------------------------------------------------------------------------
+UINT32 UTILS_CalcHash (STRING s)
+{
+   UINT8    strLen = 0;
+   UINT8    i;
+   UINT32   hash;
+   UINT16   chkSum;
+
+   strLen = STRING_LEN(s);
+   hash =  strLen << 24;
+   chkSum = 0;
+
+   for (i = 0; i < strLen; i++)
+      chkSum += s[i] * (i + 1);
+
+   hash |= chkSum;
+
+   return hash;
+}

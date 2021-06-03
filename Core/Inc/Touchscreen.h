@@ -103,6 +103,7 @@ void  TOUCH_IO_Write                   (UINT8 Addr, UINT8 Reg, UINT8 Value);
 UINT8 TOUCH_IO_Read                    (UINT8 Addr, UINT8 Reg);
 void  TOUCH_IO_Delay                   (UINT32 Delay);
 
+UINT8 TOUCH_CheckPopupButton           (s_POPUP* p, UINT16 posX, UINT16 posY);
 UINT8 TOUCH_CheckFooterButtonPressed   (s_FOOTER* f, UINT16 posX, UINT16 posY);
 
 void  TOUCH_TaskRun                    (void *argument);

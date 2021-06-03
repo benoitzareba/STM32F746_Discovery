@@ -17,6 +17,7 @@
 #include "Display.h"
 #include "LCD.h"
 #include "Event.h"
+#include "Utils.h"
 #include <stdio.h>
 
 //-----------------------------------------------------------------------------
@@ -52,13 +53,6 @@ static s_HEADER   _header[] = {
                               };
 
 static s_SCREEN   _curScr;
-static s_SCREEN   _scr[] =    {
-                                 {NO_SCREEN, NO_SCREEN,  NO_SCREEN_STATE,  NULL,             NULL,                LCD_COLOR_TRANSPARENT,  NULL, NULL},
-                                 {SCREEN_1,  NO_SCREEN,  NO_SCREEN_STATE,  SCREEN_DispScr1,  SCREEN_UpdateScr1,   LCD_COLOR_LIGHTCYAN,    NULL, NULL},
-                                 {SCREEN_2,  NO_SCREEN,  NO_SCREEN_STATE,  SCREEN_DispScr2,  SCREEN_UpdateScr2,   LCD_COLOR_LIGHTGREEN,   NULL, NULL},
-                                 {SCREEN_3,  NO_SCREEN,  NO_SCREEN_STATE,  SCREEN_DispScr3,  SCREEN_UpdateScr3,   LCD_COLOR_LIGHTYELLOW,  NULL, NULL},
-                                 {SCREEN_4,  NO_SCREEN,  NO_SCREEN_STATE,  SCREEN_DispScr4,  SCREEN_UpdateScr4,   LCD_COLOR_LIGHTRED,     NULL, NULL},
-                              };
 
 static BOOL       _updateFooter = FALSE;
 static s_FOOTER   _footer[] = {
@@ -123,6 +117,8 @@ static s_FOOTER   _footer[] = {
                                     }
                                  },
                               };
+
+static BOOL _updateSlideMenu = FALSE;
 
 //---------- Functions ----------
 
@@ -209,6 +205,7 @@ BOOL SCREEN_DispScr2 (void *p)
 
       case DURING_SCREEN_STATE:
       {
+         //POPUP_Informations(s);
          break;
       }
 
@@ -344,43 +341,223 @@ BOOL SCREEN_UpdateScr4 (void *p, void *e)
 }
 
 //-----------------------------------------------------------------------------
+// FONCTION    : SCREEN_UpdatePopup
+//
+// DESCRIPTION :
+//-----------------------------------------------------------------------------
+BOOL SCREEN_DispPopup (void *p)
+{
+   s_SCREEN *s = (s_SCREEN *)p;
+   s_POPUP *pop = s->popup;
+
+   switch (s->state)
+   {
+      case BEFORE_SCREEN_STATE:
+      {
+         //--- Affichage de la popup
+         DISP_ShowPopup(pop, s->header->color);
+
+         s->state = DURING_SCREEN_STATE;
+         break;
+      }
+
+      case DURING_SCREEN_STATE:
+      {
+
+         break;
+      }
+
+      case AFTER_SCREEN_STATE:
+      {
+         break;
+      }
+
+      default:
+      {
+         break;
+      }
+   }
+
+   return TRUE;
+}
+
+//-----------------------------------------------------------------------------
+// FONCTION    : SCREEN_UpdatePopup
+//
+// DESCRIPTION :
+//-----------------------------------------------------------------------------
+BOOL SCREEN_UpdatePopup (void *p, void *e)
+{
+   s_SCREEN *s = (s_SCREEN *)p;
+
+   SCREEN_ClearPopup(s);
+
+   return TRUE;
+}
+
+//-----------------------------------------------------------------------------
+// FONCTION    : SCREEN_ShowPopup
+//
+// DESCRIPTION :
+//-----------------------------------------------------------------------------
+void SCREEN_ShowPopup (s_SCREEN *s, s_POPUP *popup)
+{
+   if (s->popup == NULL)
+   {
+      s->state = BEFORE_SCREEN_STATE;
+
+      popup->prevDisp = s->disp;
+      popup->prevUpdate = s->update;
+
+      s->disp     = SCREEN_DispPopup;
+      s->update   = SCREEN_UpdatePopup;
+      s->popup    = popup;
+   }
+}
+
+//-----------------------------------------------------------------------------
+// FONCTION    : SCREEN_ShowPopup
+//
+// DESCRIPTION :
+//-----------------------------------------------------------------------------
+void SCREEN_ClearPopup (s_SCREEN *s)
+{
+   s->disp = s->popup->prevDisp;
+   s->update = s->popup->prevUpdate;
+
+   s->state = BEFORE_SCREEN_STATE;
+
+   LCD_Clear(LCD_COLOR_BACKGROUND_PAGE);
+
+   _updateFooter = TRUE;
+   _updateHeader = TRUE;
+   _updateSlideMenu = TRUE;
+
+   s->popup = NULL;
+}
+
+//-----------------------------------------------------------------------------
 // FONCTION    : SCREEN_LoadNext
 //
 // DESCRIPTION :
 //-----------------------------------------------------------------------------
-BOOL SCREEN_LoadNext (s_SCREEN *s, UINT8 idScr)
+BOOL SCREEN_LoadNext (s_SCREEN *s, CHAR8* menuName)
 {
    BOOL success = FALSE;
-   UINT8 oldScr = NO_SCREEN;
-   UINT8 i;
+   BOOL screenLoaded = FALSE;
 
-   if (idScr > NO_SCREEN && idScr < NB_SCREEN)
+   //--- Chargement de l'ecran
+   screenLoaded = SCREEN_LoadAndUpdate(menuName, s);
+
+   if (screenLoaded == TRUE)
    {
-      //--- Sauvegarde de l'ecran precedent
-      oldScr = s->idScr;
-
-      //--- Chargement de l'ecran
-      *s = _scr[idScr];
-
-      //--- MaJ des variables
-      s->oldScr = oldScr;
-      s->state = BEFORE_SCREEN_STATE;
-
-      //--- Chargement des headers et footers associes
-      s->header = &_header[s->idScr];
-      s->footer = &_footer[s->idScr];
-
-      for (i = 0; i < NB_BUTTON_MAX; i++)
-         s->footer->button[i].selected = FALSE;
-      s->footer->button[s->idScr - 1].selected = TRUE;
-
       _updateHeader = TRUE;
       _updateFooter = TRUE;
+      _updateSlideMenu = TRUE;
 
       success = TRUE;
    }
 
    return success;
+}
+
+//-----------------------------------------------------------------------------
+// FONCTION    : SCREEN_LoadAndUpdate
+//
+// DESCRIPTION :
+//-----------------------------------------------------------------------------
+BOOL SCREEN_LoadAndUpdate (CHAR8* menuName, s_SCREEN* s)
+{
+   BOOL success = TRUE;
+   UINT8 i;
+   UINT32 hashMenuName;
+
+   //--- Sauvegarde de l'ecran precedent
+   s->oldScr = s->idScr;
+
+   //--- Conversion de la fonction en hash
+   hashMenuName = UTILS_CalcHash(menuName);
+
+   //--- Charge les fonctions disp et update de la fonction
+   switch (hashMenuName)
+   {
+      case HASH_DISPSCREEN1:
+      {
+         s->idScr    = SCREEN_1;
+         s->disp     = SCREEN_DispScr1;
+         s->update   = SCREEN_UpdateScr1;
+         break;
+      }
+
+      case HASH_DISPSCREEN2:
+      {
+         s->idScr    = SCREEN_2;
+         s->disp     = SCREEN_DispScr2;
+         s->update   = SCREEN_UpdateScr2;
+         break;
+      }
+
+      case HASH_DISPSCREEN3:
+      {
+         s->idScr    = SCREEN_3;
+         s->disp     = SCREEN_DispScr3;
+         s->update   = SCREEN_UpdateScr3;
+         break;
+      }
+
+      case HASH_DISPSCREEN4:
+      {
+         s->idScr    = SCREEN_4;
+         s->disp     = SCREEN_DispScr4;
+         s->update   = SCREEN_UpdateScr4;
+         break;
+      }
+
+      default:
+      {
+         success = FALSE;
+         break;
+      }
+   }
+
+   //--- Si la fonction existe
+   if (success == TRUE)
+   {
+      if (s->oldScr != s->idScr)
+      {
+         //--- MaJ des variables
+         s->state = BEFORE_SCREEN_STATE;
+
+         //--- Chargement des headers et footers associes
+         s->header = &_header[s->idScr];
+         s->footer = &_footer[s->idScr];
+
+         for (i = 0; i < NB_BUTTON_MAX; i++)
+            s->footer->button[i].selected = FALSE;
+         s->footer->button[s->idScr - 1].selected = TRUE;
+
+         s->popup = NULL;
+      }
+      else
+         success = FALSE;
+   }
+
+   return success;
+}
+
+//-----------------------------------------------------------------------------
+// FONCTION    : SCREEN_Update
+//
+// DESCRIPTION :
+//-----------------------------------------------------------------------------
+BOOL SCREEN_Update (s_SCREEN* s, void* e)
+{
+   BOOL updateDone = FALSE;
+
+   //--- Fonction d'update de l'ecran
+   updateDone = s->update(s, e);
+
+   return updateDone;
 }
 
 //-----------------------------------------------------------------------------
@@ -402,6 +579,9 @@ BOOL SCREEN_Display (s_SCREEN* s)
    //--- Fonction d'affichage
    dispDone = s->disp(s);
 
+   if (_updateSlideMenu == TRUE)
+      DISP_ShowSlideMenu(s->header);
+
    return dispDone;
 }
 
@@ -419,7 +599,7 @@ void SCREEN_Initialize (void)
    LCD_Clear(LCD_COLOR_BACKGROUND_PAGE);
 
    //--- Load first screen
-   SCREEN_LoadNext(&_curScr, SCREEN_1);
+   SCREEN_LoadNext(&_curScr, (STRING)"DispScreen1");
 }
 
 //-----------------------------------------------------------------------------
@@ -429,7 +609,8 @@ void SCREEN_Initialize (void)
 //-----------------------------------------------------------------------------
 void SCREEN_TaskRun (void *argument)
 {
-   UINT8 newScrId;
+   STRING_TAB function;
+   UINT8 idItem = NO_TOUCH_ITEM;
    osStatus_t eventStatus;
 
    //--- Remove compiler warning about unused parameter.
@@ -438,12 +619,16 @@ void SCREEN_TaskRun (void *argument)
    for ( ;; )
    {
       //--- Evenement changement d'ecran
-      eventStatus = osMessageQueueGet(CHANGE_SCREEN_Event, &newScrId, NULL, 0);
+      eventStatus = osMessageQueueGet(CHANGE_SCREEN_Event, &function, NULL, 0);
       if (eventStatus == osOK)
       {
-         //--- Si l'index de l'ecran est different
-         if (newScrId != _curScr.idScr)
-            SCREEN_LoadNext(&_curScr, newScrId);
+         SCREEN_LoadNext(&_curScr, (STRING)function);
+      }
+
+      eventStatus = osMessageQueueGet(POPUP_Event, &idItem, NULL, 0);
+      if (eventStatus == osOK)
+      {
+         SCREEN_Update(&_curScr, &idItem);
       }
 
       //--- Send current screen to touchscreen task
@@ -451,7 +636,8 @@ void SCREEN_TaskRun (void *argument)
 
       SCREEN_Display(&_curScr);
 
-      _updateHeader = FALSE;
-      _updateFooter = FALSE;
+      _updateHeader     = FALSE;
+      _updateFooter     = FALSE;
+      _updateSlideMenu  = FALSE;
    }
 }

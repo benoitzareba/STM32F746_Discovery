@@ -14,6 +14,7 @@
 // Included files
 //-----------------------------------------------------------------------------
 #include "Touchscreen.h"
+#include "Popup.h"
 #include "Board.h"
 #include "I2C.h"
 #include "Event.h"
@@ -382,17 +383,62 @@ void TOUCH_IO_Delay (UINT32 Delay)
 UINT8 TOUCH_CheckFooterButtonPressed (s_FOOTER* f, UINT16 posX, UINT16 posY)
 {
    UINT8 i;
+   s_RECT* r;
 
    for (i = 0; i < f->nbButton; i++)
    {
-      if ((posX >= f->button[i].coordinates.x && posX <= f->button[i].coordinates.x + f->button[i].coordinates.width) &&
-          (posY >= f->button[i].coordinates.y && posY <= f->button[i].coordinates.y + f->button[i].coordinates.height))
+      r = &f->button[i].rect;
+      if ((posX >= r->x && posX <= r->x + r->width) && (posY >= r->y && posY <= r->y + r->height))
       {
          break;
       }
    }
 
    return i;
+}
+
+//-----------------------------------------------------------------------------
+// FONCTION    : TOUCH_CheckPopupButton
+//
+// DESCRIPTION : Determine si un bouton popup a ete presse
+//-----------------------------------------------------------------------------
+UINT8 TOUCH_CheckPopupButton (s_POPUP* p, UINT16 posX, UINT16 posY)
+{
+   UINT8 item = NO_TOUCH_ITEM;
+   s_RECT posRedCross;
+   s_RECT* rLeft;
+   s_RECT* rRight;
+
+   //--- Recupere les coordonnees des boutons popup
+   POPUP_GetCloseCrossPosition(&posRedCross);
+
+   //--- S'il y a au minimum 1 button
+   if (p->nbButton > 0)
+   {
+      //--- Position des boutons
+      rLeft = &p->btLeft->coord;
+
+      if ((posX >= rLeft->x && posX <= rLeft->x + rLeft->width) && (posY >= rLeft->y && posY <= rLeft->y + rLeft->height))
+      {
+         item = LEFT_BUTTON;
+      }
+
+      //-- S'il y a second button
+      if (p->nbButton == 2)
+      {
+         rRight = &p->btRight->coord;
+
+         if ((posX >= rRight->x && posX <= rRight->x + rRight->width) && (posY >= rRight->y && posY <= rRight->y + rRight->height))
+         {
+            item = RIGHT_BUTTON;
+         }
+      }
+   }
+
+   if ((posX >= posRedCross.x - 5 && posX <= posRedCross.x + posRedCross.width + 5) && (posY >= posRedCross.y - 5 && posY <= posRedCross.y + posRedCross.height + 5))
+      item = CLOSE_CROSS;
+
+   return item;
 }
 
 //-----------------------------------------------------------------------------
@@ -404,8 +450,11 @@ void TOUCH_TaskRun (void *argument)
 {
    TS_StateTypeDef tsState = {0};
    s_SCREEN scr;
-   UINT8 touchStateOld;
+   s_FOOTER *f;
+   s_POPUP *p;
    UINT8 idButtonFooter;
+   UINT8 idItemPopup;
+   UINT8 touchStateOld;
    osStatus_t eventStatus;
 
    //--- Remove compiler warning about unused parameter.
@@ -427,15 +476,33 @@ void TOUCH_TaskRun (void *argument)
 
             if (tsState.touchDetected == 1)
             {
-               //--- Determine si l'appui se situe sur un bouton du footer
-               idButtonFooter = TOUCH_CheckFooterButtonPressed(scr.footer, tsState.touchX[0], tsState.touchY[0]);
-
-               //--- Si l'appui correspond a un bouton du footer
-               if (idButtonFooter < NB_BUTTON_MAX)
+               if (scr.disp != SCREEN_DispPopup)
                {
-                  //--- Send current screen to touchscreen task
-                  idButtonFooter++;
-                  osMessageQueuePut(CHANGE_SCREEN_Event, &idButtonFooter, 0, 0);
+                  //--- Pointeur footer
+                  f = scr.footer;
+
+                  //--- Determine si l'appui se situe sur un bouton du footer
+                  idButtonFooter = TOUCH_CheckFooterButtonPressed(f, tsState.touchX[0], tsState.touchY[0]);
+
+                  //--- Si l'appui correspond a un bouton du footer
+                  if (idButtonFooter < NB_BUTTON_MAX)
+                  {
+                     //--- Changement d'ecran
+                     osMessageQueuePut(CHANGE_SCREEN_Event, &f->button[idButtonFooter].function, 0, 0);
+                  }
+               }
+               else if (scr.disp == SCREEN_DispPopup)
+               {
+                  //--- Pointeur popup
+                  p = scr.popup;
+
+                  idItemPopup = TOUCH_CheckPopupButton(p, tsState.touchX[0], tsState.touchY[0]);
+
+                  if (idItemPopup > NO_TOUCH_ITEM && idItemPopup)
+                  {
+                     //--- Retourne l'item popup touche
+                     osMessageQueuePut(POPUP_Event, &idItemPopup, 0, 0);
+                  }
                }
             }
          }

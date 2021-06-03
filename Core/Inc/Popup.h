@@ -1,11 +1,11 @@
 //=============================================================================
 //
 // PROJECT     :  STM32F746-Discovery
-// HEADER      :  Event.h
+// HEADER      :  Popup.h
 //
 //=============================================================================
-#ifndef _EVENT_H_
-#define _EVENT_H_
+#ifndef _POPUP_H
+#define _POPUP_H
 
 //=============================================================================
 //--- DECLARATIONS
@@ -15,27 +15,42 @@
 // Included files
 //-----------------------------------------------------------------------------
 #include "TypeDefs.h"
-#include "cmsis_os.h"
+#include "Screen.h"
 
 //-----------------------------------------------------------------------------
 // Constants : defines and enumerations
 //-----------------------------------------------------------------------------
+enum
+{
+   NO_BADGE_POPUP = 0,
+   QUESTION_POPUP,
+   INFORMATION_POPUP,
+   ERROR_POPUP
+};
 
 //-----------------------------------------------------------------------------
 // Structures and types
 //-----------------------------------------------------------------------------
+
+enum
+{
+   NO_TOUCH_ITEM = 0,
+
+   CLOSE_CROSS,
+   LEFT_BUTTON,
+   RIGHT_BUTTON,
+
+   NB_ITEM_POPUP
+};
 
 //-----------------------------------------------------------------------------
 // External variables and functions
 //-----------------------------------------------------------------------------
 
 //---------- Variables ----------
-extern osMessageQueueId_t BUTTON_Event;
-extern osMessageQueueId_t SCREEN_Event;
-extern osMessageQueueId_t CHANGE_SCREEN_Event;
-extern osMessageQueueId_t POPUP_Event;
 
 //---------- Functions ----------
-void EVENT_Initialize (void);
+void POPUP_Informations (void *p);
+void POPUP_GetCloseCrossPosition (s_RECT* crossPosition);
 
 #endif

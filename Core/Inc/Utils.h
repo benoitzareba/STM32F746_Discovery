@@ -1,11 +1,11 @@
 //=============================================================================
 //
 // PROJECT     :  STM32F746-Discovery
-// HEADER      :  Event.h
+// HEADER      :  Utils.h
 //
 //=============================================================================
-#ifndef _EVENT_H_
-#define _EVENT_H_
+#ifndef _UTILS_H
+#define _UTILS_H
 
 //=============================================================================
 //--- DECLARATIONS
@@ -15,7 +15,6 @@
 // Included files
 //-----------------------------------------------------------------------------
 #include "TypeDefs.h"
-#include "cmsis_os.h"
 
 //-----------------------------------------------------------------------------
 // Constants : defines and enumerations
@@ -30,12 +29,8 @@
 //-----------------------------------------------------------------------------
 
 //---------- Variables ----------
-extern osMessageQueueId_t BUTTON_Event;
-extern osMessageQueueId_t SCREEN_Event;
-extern osMessageQueueId_t CHANGE_SCREEN_Event;
-extern osMessageQueueId_t POPUP_Event;
 
 //---------- Functions ----------
-void EVENT_Initialize (void);
+UINT32 UTILS_CalcHash (STRING s);
 
 #endif

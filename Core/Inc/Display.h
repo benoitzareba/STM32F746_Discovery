@@ -32,7 +32,9 @@
 //---------- Variables ----------
 
 //---------- Functions ----------
-void DISP_ShowHeader (s_HEADER* h);
-void DISP_ShowFooter (s_FOOTER* f);
+void DISP_ShowHeader    (s_HEADER* h);
+void DISP_ShowFooter    (s_FOOTER* f);
+void DISP_ShowSlideMenu (s_HEADER* h);
+void DISP_ShowPopup     (s_POPUP* p, UINT32 color);
 
 #endif

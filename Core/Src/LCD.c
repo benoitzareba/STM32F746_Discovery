@@ -1103,6 +1103,21 @@ void LCD_DrawCircle (UINT16 Xpos, UINT16 Ypos, UINT16 Radius)
 }
 
 //-----------------------------------------------------------------------------
+// FONCTION    : LCD_DrawFilledCircle
+//
+// DESCRIPTION : Draws a circle.
+//-----------------------------------------------------------------------------
+void LCD_DrawFilledCircle (UINT16 Xpos, UINT16 Ypos, UINT16 Radius)
+{
+   UINT8 i;
+
+   for (i = Radius; i > 0; i--)
+   {
+      LCD_DrawCircle(Xpos, Ypos, i);
+   }
+}
+
+//-----------------------------------------------------------------------------
 // FONCTION    : LCD_DrawPolygon
 //
 // DESCRIPTION : Draws an poly-line (between many points).
@@ -1680,4 +1695,20 @@ void LCD_DrawHLineThickness (UINT16 Xpos, UINT16 Ypos, UINT16 Length, UINT8 Thic
    {
       LCD_DrawHLine(Xpos, Ypos + i, Length);
    }
+}
+
+//-----------------------------------------------------------------------------
+// FONCTION    : LCD_GetStringWidth
+//
+// DESCRIPTION : Draw horizontal line with thickness
+//-----------------------------------------------------------------------------
+UINT16 LCD_GetStringWidth (STRING str)
+{
+   UINT8 arraySize;
+   sFONT* font;
+
+   arraySize = STRING_LEN(str);
+   font = LCD_GetFont();
+
+   return font->Width * arraySize;
 }

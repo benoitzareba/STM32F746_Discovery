@@ -151,6 +151,7 @@ void     LCD_DrawVLine                 (UINT16 Xpos, UINT16 Ypos, UINT16 Length)
 void     LCD_DrawLine                  (UINT16 x1, UINT16 y1, UINT16 x2, UINT16 y2);
 void     LCD_DrawRect                  (UINT16 Xpos, UINT16 Ypos, UINT16 Width, UINT16 Height);
 void     LCD_DrawCircle                (UINT16 Xpos, UINT16 Ypos, UINT16 Radius);
+void     LCD_DrawFilledCircle          (UINT16 Xpos, UINT16 Ypos, UINT16 Radius);
 void     LCD_DrawPolygon               (pPoint Points, UINT16 PointCount);
 void     LCD_DrawEllipse               (INT32 Xpos, INT32 Ypos, INT32 XRadius, INT32 YRadius);
 void     LCD_DrawBitmap                (UINT32 Xpos, UINT32 Ypos, UINT8 *pbmp);
@@ -166,6 +167,7 @@ void     LCD_ClockConfig               (LTDC_HandleTypeDef *hltdc, void *Params)
 void     LCD_DrawRectWithThickness     (UINT16 Xpos, UINT16 Ypos, UINT16 Width, UINT16 Height, UINT8 Thickness);
 void     LCD_DrawRectButton            (UINT16 Xpos, UINT16 Ypos, UINT16 Width, UINT16 Height, UINT32 color, CHAR8 *txt, BOOL selected);
 void     LCD_DrawHLineThickness        (UINT16 Xpos, UINT16 Ypos, UINT16 Length, UINT8 Thickness);
+UINT16   LCD_GetStringWidth            (STRING str);
 
 
 #endif
