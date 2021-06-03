@@ -138,6 +138,8 @@ void DISP_ShowSlideMenu (s_HEADER* h)
       LCD_DrawVLine(LCD_GetXSize() - (10 - i), 101 - i, 71 + (i * 2));
    }
 
+   LCD_DrawVLine(LCD_GetXSize() - 1, 0, LCD_GetYSize());
+
    LCD_SetTextColor(LCD_COLOR_BLACK);
    LCD_DrawLine(LCD_GetXSize() - 4, 130, LCD_GetXSize() - 8, 135);
    LCD_DrawLine(LCD_GetXSize() - 8, 135, LCD_GetXSize() - 4, 140);
