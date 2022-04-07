@@ -16,6 +16,7 @@
 #include "LED.h"
 #include "Board.h"
 #include "Event.h"
+#include "Screen.h"
 
 //-----------------------------------------------------------------------------
 // Constants : defines and enumerations
@@ -57,6 +58,8 @@ void LED_TaskRun (void *argument)
    BOOL  receivedButtonState;
    osStatus_t eventStatus;
 
+   static BOOL slideM = TRUE;
+
    //--- Remove compiler warning about unused parameter.
    (void)argument;
 
@@ -69,6 +72,10 @@ void LED_TaskRun (void *argument)
       {
          //--- Drive output led pin
          HAL_GPIO_WritePin(GPIOI, GPIO_PIN_1, receivedButtonState);
+
+         SCREEN_UpdateSlideMenu(slideM);
+
+         slideM = !slideM;
       }
    }
 }

@@ -45,6 +45,7 @@ enum
 };
 
 #define NB_BUTTON_MAX                  4
+#define NB_ICON_MAX                    4
 
 #define HASH_DISPSCREEN1               184555610
 #define HASH_DISPSCREEN2               184555621
@@ -57,9 +58,9 @@ enum
 
 typedef struct //--- s_HEADER
 {
-   STRING_TAB     title;
-   STRING_TAB     description;
-   UINT32         color;
+   STRING_TAB           title;
+   STRING_TAB           description;
+   UINT32               color;
 } s_HEADER;
 
 typedef struct //--- s_BUTTON
@@ -79,6 +80,20 @@ typedef struct //--- s_FOOTER
    s_BUTTON             button[NB_BUTTON_MAX];
 } s_FOOTER;
 
+typedef struct //--- s_ICON
+{
+   UINT32               color;
+   STRING_TAB           label;
+} s_ICON;
+
+typedef struct //--- s_SLIDE
+{
+   BOOL                 state;
+   UINT32               color;
+   UINT8                nbIcon;
+   s_ICON               icon[NB_ICON_MAX];
+} s_SLIDE;
+
 typedef struct //--- s_SCREEN
 {
    UINT8                idScr;
@@ -90,6 +105,7 @@ typedef struct //--- s_SCREEN
    s_HEADER             *header;
    s_FOOTER             *footer;
    s_POPUP              *popup;
+   s_SLIDE              *slide;
 } s_SCREEN;
 
 //-----------------------------------------------------------------------------
@@ -101,31 +117,35 @@ extern osThreadId_t SCREEN_TaskHandle;
 extern const osThreadAttr_t SCREEN_TaskAttributes;
 
 //---------- Functions ----------
-BOOL SCREEN_DispScr1       (void *p);
-BOOL SCREEN_UpdateScr1     (void *p, void *e);
+BOOL SCREEN_DispScr1          (void *p);
+BOOL SCREEN_UpdateScr1        (void *p, void *e);
 
-BOOL SCREEN_DispScr2       (void *p);
-BOOL SCREEN_UpdateScr2     (void *p, void *e);
+BOOL SCREEN_DispScr2          (void *p);
+BOOL SCREEN_UpdateScr2        (void *p, void *e);
 
-BOOL SCREEN_DispScr3       (void *p);
-BOOL SCREEN_UpdateScr3     (void *p, void *e);
+BOOL SCREEN_DispScr3          (void *p);
+BOOL SCREEN_UpdateScr3        (void *p, void *e);
 
-BOOL SCREEN_DispScr4       (void *p);
-BOOL SCREEN_UpdateScr4     (void *p, void *e);
+BOOL SCREEN_DispScr4          (void *p);
+BOOL SCREEN_UpdateScr4        (void *p, void *e);
 
-BOOL SCREEN_DispPopup      (void *p);
-BOOL SCREEN_UpdatePopup    (void *p, void *e);
+BOOL SCREEN_DispPopup         (void *p);
+BOOL SCREEN_UpdatePopup       (void *p, void *e);
 
-void SCREEN_ShowPopup      (s_SCREEN *s, s_POPUP *popup);
-void SCREEN_ClearPopup     (s_SCREEN *s);
+void SCREEN_ShowPopup         (s_SCREEN *s, s_POPUP *popup);
+void SCREEN_ClearPopup        (s_SCREEN *s);
 
-BOOL SCREEN_LoadNext       (s_SCREEN *s, CHAR8* menuName);
-BOOL SCREEN_LoadAndUpdate  (CHAR8* menuName, s_SCREEN* s);
+void SCREEN_UpdateSlideMenu   (BOOL state);
 
-BOOL SCREEN_Update         (s_SCREEN* s, void* e);
-BOOL SCREEN_Display        (s_SCREEN* s);
+BOOL SCREEN_LoadNext          (s_SCREEN *s, CHAR8* menuName);
+BOOL SCREEN_LoadAndUpdate     (CHAR8* menuName, s_SCREEN* s);
 
-void SCREEN_Initialize     (void);
-void SCREEN_TaskRun        (void *argument);
+BOOL SCREEN_Update            (s_SCREEN* s, void* e);
+BOOL SCREEN_Display           (s_SCREEN* s);
+
+void SCREEN_RefreshCurrent    (void);
+
+void SCREEN_Initialize        (void);
+void SCREEN_TaskRun           (void *argument);
 
 #endif

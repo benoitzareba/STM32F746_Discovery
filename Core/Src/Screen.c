@@ -118,7 +118,21 @@ static s_FOOTER   _footer[] = {
                                  },
                               };
 
-static BOOL _updateSlideMenu = FALSE;
+static s_SLIDE _slide[] =     {
+                                 //--- Slide scr 0
+                                 {CLOSE,  LCD_COLOR_LIGHTCYAN,    4, {{LCD_COLOR_LIGHTGREEN, "Wifi"}, {LCD_COLOR_LIGHTRED, "Bluetooth"}, {LCD_COLOR_LIGHTYELLOW, "Ethernet"},  {LCD_COLOR_LIGHTCYAN, "VPN"}}},
+
+                                 //--- Slide scr 1
+                                 {CLOSE,  LCD_COLOR_LIGHTGREEN,   3, {{LCD_COLOR_LIGHTRED, "Facebook"}, {LCD_COLOR_LIGHTYELLOW, "Instagram"}, {LCD_COLOR_LIGHTCYAN, "Snapchat"}, {0, ""}}},
+
+                                 //--- Slide scr 2
+                                 {CLOSE,  LCD_COLOR_LIGHTYELLOW,  2, {{LCD_COLOR_LIGHTYELLOW, "Date"}, {LCD_COLOR_LIGHTCYAN, "Hour"}, {0, ""},  {0, ""}}},
+
+                                 //--- Slide scr 3
+                                 {CLOSE,  LCD_COLOR_LIGHTRED,     1, {{LCD_COLOR_LIGHTCYAN, "Update"}, {0,""}, {0,""}, {0,""}}},
+                              };
+
+static BOOL _updateSlideMenu = TRUE;
 
 //---------- Functions ----------
 
@@ -437,6 +451,25 @@ void SCREEN_ClearPopup (s_SCREEN *s)
 }
 
 //-----------------------------------------------------------------------------
+// FONCTION    : SCREEN_UpdateSlideMenu
+//
+// DESCRIPTION :
+//-----------------------------------------------------------------------------
+void SCREEN_UpdateSlideMenu (BOOL state)
+{
+   _curScr.slide->state = state;
+
+   if (state == (BOOL)OPEN)
+   {
+      _updateSlideMenu = TRUE;
+   }
+   else
+   {
+      SCREEN_RefreshCurrent();
+   }
+}
+
+//-----------------------------------------------------------------------------
 // FONCTION    : SCREEN_LoadNext
 //
 // DESCRIPTION :
@@ -531,6 +564,7 @@ BOOL SCREEN_LoadAndUpdate (CHAR8* menuName, s_SCREEN* s)
          //--- Chargement des headers et footers associes
          s->header = &_header[s->idScr];
          s->footer = &_footer[s->idScr];
+         s->slide = &_slide[s->idScr - 1];
 
          for (i = 0; i < NB_BUTTON_MAX; i++)
             s->footer->button[i].selected = FALSE;
@@ -569,7 +603,6 @@ BOOL SCREEN_Display (s_SCREEN* s)
 {
    BOOL dispDone = FALSE;
 
-   //--- Disp header
    if (_updateHeader == TRUE)
       DISP_ShowHeader(s->header);
 
@@ -580,9 +613,23 @@ BOOL SCREEN_Display (s_SCREEN* s)
    dispDone = s->disp(s);
 
    if (_updateSlideMenu == TRUE)
-      DISP_ShowSlideMenu(s->header);
+      DISP_ShowSlideMenu(s->slide);
 
    return dispDone;
+}
+
+//-----------------------------------------------------------------------------
+// FONCTION    : SCREEN_RefreshCurrent
+//
+// DESCRIPTION : Rafraichissement de l'ecran courant
+//-----------------------------------------------------------------------------
+void SCREEN_RefreshCurrent (void)
+{
+   _curScr.state = BEFORE_SCREEN_STATE;
+
+   _updateFooter = TRUE;
+   _updateHeader = TRUE;
+   _updateSlideMenu = TRUE;
 }
 
 //-----------------------------------------------------------------------------

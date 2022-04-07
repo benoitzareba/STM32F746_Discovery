@@ -24,6 +24,7 @@
 #define MAX_CHARS_STRING                  50
 #define STRING_FORMAT(S, F, ...)          sprintf((S), (const char *)(F), __VA_ARGS__)
 #define STRING_COPY(D,S)                  strcpy((char *)(D), (const char *)(S))
+#define STRING_COPY_LEN(D,S,L)            strncpy((char *)(D), (const char *)(S), (L))
 #define STRING_LEN(S)                     strlen((char *)(S))
 
 //-----------------------------------------------------------------------------

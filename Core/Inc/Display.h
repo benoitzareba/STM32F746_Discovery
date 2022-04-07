@@ -20,6 +20,11 @@
 //-----------------------------------------------------------------------------
 // Constants : defines and enumerations
 //-----------------------------------------------------------------------------
+enum
+{
+   CLOSE = 0,
+   OPEN
+};
 
 //-----------------------------------------------------------------------------
 // Structures and types
@@ -34,7 +39,7 @@
 //---------- Functions ----------
 void DISP_ShowHeader    (s_HEADER* h);
 void DISP_ShowFooter    (s_FOOTER* f);
-void DISP_ShowSlideMenu (s_HEADER* h);
+void DISP_ShowSlideMenu (s_SLIDE* s);
 void DISP_ShowPopup     (s_POPUP* p, UINT32 color);
 
 #endif

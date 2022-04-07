@@ -16,6 +16,7 @@
 #include "Display.h"
 #include "Popup.h"
 #include "LCD.h"
+#include "Screen.h"
 
 //-----------------------------------------------------------------------------
 // Constants : defines and enumerations
@@ -58,27 +59,30 @@ void DISP_ShowHeader (s_HEADER* h)
    const UINT8 posXDescription = 52;
    const UINT8 posYDescription = 26;
 
-   //--- Zone
-   LCD_SetTextColor(LCD_COLOR_BACKGROUND_ITEM);
-   LCD_FillRect(0, 0, LCD_GetXSize(), height);
+   if (h != NULL)
+   {
+      //--- Zone
+      LCD_SetTextColor(LCD_COLOR_BACKGROUND_ITEM);
+      LCD_FillRect(0, 0, LCD_GetXSize(), height);
 
-   //--- Logo
-   LCD_SetTextColor(h->color);
-   LCD_FillRect(8, 4, 32, 32);
+      //--- Logo
+      LCD_SetTextColor(h->color);
+      LCD_FillRect(8, 4, 32, 32);
 
-   //--- Title
-   LCD_SetFont(&LCD_FONT_20);
-   LCD_SetTextColor(h->color);
-   LCD_SetBackColor(LCD_COLOR_BACKGROUND_ITEM);
-   LCD_DisplayStringAt(posXTitle, posYTitle, (STRING)h->title, LEFT_MODE);
+      //--- Title
+      LCD_SetFont(&LCD_FONT_20);
+      LCD_SetTextColor(h->color);
+      LCD_SetBackColor(LCD_COLOR_BACKGROUND_ITEM);
+      LCD_DisplayStringAt(posXTitle, posYTitle, (STRING)h->title, LEFT_MODE);
 
-   //--- Description
-   LCD_SetFont(&LCD_FONT_12);
-   LCD_SetTextColor(LCD_COLOR_GRAY);
-   LCD_DisplayStringAt(posXDescription, posYDescription, (STRING)h->description, LEFT_MODE);
+      //--- Description
+      LCD_SetFont(&LCD_FONT_12);
+      LCD_SetTextColor(LCD_COLOR_GRAY);
+      LCD_DisplayStringAt(posXDescription, posYDescription, (STRING)h->description, LEFT_MODE);
 
-   LCD_SetTextColor(h->color);
-   LCD_DrawHLineThickness(0, height, LCD_GetXSize(), 2);
+      LCD_SetTextColor(h->color);
+      LCD_DrawHLineThickness(0, height, LCD_GetXSize(), 2);
+   }
 }
 
 //-----------------------------------------------------------------------------
@@ -97,26 +101,29 @@ void DISP_ShowFooter (s_FOOTER* f)
    const UINT8 buttonWidth       = 112;
    const UINT8 buttonHeight      = 50;
 
-   //--- Footer
-   LCD_SetTextColor(f->color);
-   LCD_DrawHLine(0, LCD_GetYSize() - 52, LCD_GetXSize());
-
-   LCD_SetTextColor(LCD_COLOR_BACKGROUND_ITEM);
-   LCD_FillRect(0, LCD_GetYSize() - 51, LCD_GetXSize(), 51);
-
-   for (i = 0; i < f->nbButton; i++)
+   if (f != NULL)
    {
-      //--- Init pointer
-      b = &f->button[i];
-      r = &f->button[i].rect;
+      //--- Footer
+      LCD_SetTextColor(f->color);
+      LCD_DrawHLine(0, LCD_GetYSize() - 52, LCD_GetXSize());
 
-      //--- Determine les coordonnees
-      r->width    = buttonWidth;
-      r->height   = buttonHeight;
-      r->x        = buttonXPosition + buttonWidth * b->position + 10 * b->position;
-      r->y        = buttonYPosition;
+      LCD_SetTextColor(LCD_COLOR_BACKGROUND_ITEM);
+      LCD_FillRect(0, LCD_GetYSize() - 51, LCD_GetXSize(), 51);
 
-      LCD_DrawRectButton(r->x, r->y, buttonWidth, buttonHeight, b->color, (CHAR8*)b->txt, b->selected);
+      for (i = 0; i < f->nbButton; i++)
+      {
+         //--- Init pointer
+         b = &f->button[i];
+         r = &f->button[i].rect;
+
+         //--- Determine les coordonnees
+         r->width    = buttonWidth;
+         r->height   = buttonHeight;
+         r->x        = buttonXPosition + buttonWidth * b->position + 10 * b->position;
+         r->y        = buttonYPosition;
+
+         LCD_DrawRectButton(r->x, r->y, buttonWidth, buttonHeight, b->color, (CHAR8*)b->txt, b->selected);
+      }
    }
 }
 
@@ -125,24 +132,95 @@ void DISP_ShowFooter (s_FOOTER* f)
 //
 // DESCRIPTION : Draw slide menu
 //-----------------------------------------------------------------------------
-void DISP_ShowSlideMenu (s_HEADER* h)
+void DISP_ShowSlideMenu (s_SLIDE* s)
 {
    UINT8 i = 0;
+   UINT8 offset;
+   s_ICON* pI;
+   UINT16 len;
+   UINT16 pos;
+   UINT16 height;
+   STRING_TAB buffTmp;
 
-   LCD_SetTextColor(h->color);
-   LCD_DrawLine(LCD_GetXSize(), 90, LCD_GetXSize() - 10, 100);
-   LCD_DrawLine(LCD_GetXSize() - 10, 170, LCD_GetXSize(), 180);
+   const UINT8 widthSlide = 60;
+   const UINT8 iconSize  = 42;
 
-   for (i = 0; i < 10; i++)
+   if (s != NULL)
    {
-      LCD_DrawVLine(LCD_GetXSize() - (10 - i), 101 - i, 71 + (i * 2));
+      offset = 0;
+      if (s->state == (BOOL)OPEN)
+         offset = widthSlide;
+
+      //--- Dessine la poignee
+      LCD_SetTextColor(s->color);
+      LCD_DrawLine(LCD_GetXSize() - 1 - offset, 90, LCD_GetXSize() - 11 - offset, 100);
+      LCD_DrawLine(LCD_GetXSize() - 11 - offset, 170, LCD_GetXSize() - 1 - offset, 180);
+
+      for (i = 0; i < 10; i++)
+         LCD_DrawVLine(LCD_GetXSize() - (11 - i) - offset, 101 - i, 70 + (i * 2));
+
+      //--- Contour vertical
+      LCD_DrawVLine(LCD_GetXSize() - 1 - offset, 0, LCD_GetYSize());
+      LCD_DrawVLine(LCD_GetXSize() - 2 - offset, 0, LCD_GetYSize());
+
+      if (s->state == (BOOL)CLOSE)
+      {
+         //--- Fleche
+         LCD_SetTextColor(LCD_COLOR_BLACK);
+         LCD_DrawLine(LCD_GetXSize() - 3, 130, LCD_GetXSize() - 8, 135);
+         LCD_DrawLine(LCD_GetXSize() - 8, 135, LCD_GetXSize() - 3, 140);
+
+         LCD_SetTextColor(LCD_COLOR_BACKGROUND_PAGE);
+
+         //--- Masque le fond qui n'est pas rafraichi
+         LCD_FillRect(LCD_GetXSize() - widthSlide - 2, 42, widthSlide, 8);
+      }
+      else
+      {
+         //--- Fleche
+         LCD_SetTextColor(LCD_COLOR_BLACK);
+         LCD_DrawLine(LCD_GetXSize() - 8 - offset, 130, LCD_GetXSize() - 3 - offset, 135);
+         LCD_DrawLine(LCD_GetXSize() - 3 - offset, 135, LCD_GetXSize() - 8 - offset, 140);
+
+         //--- Fond
+         LCD_SetTextColor(LCD_COLOR_BACKGROUND_PAGE);
+         LCD_FillRect(LCD_GetXSize() - offset, 0, offset, LCD_GetYSize());
+
+         //--- Dessine les icones
+         for (i = 0; i < s->nbIcon; i++)
+         {
+            //--- Initialisation du pointeur d'icone
+            pI = &s->icon[i];
+
+            if (STRING_LEN(pI->label) > 0)
+            {
+               LCD_SetTextColor(pI->color);
+               pos = (widthSlide / 2) - (iconSize / 2);
+               LCD_FillRect(LCD_GetXSize() - offset + pos, 20 + (i * (iconSize + 20)), iconSize, iconSize);
+
+               LCD_SetFont(&LCD_FONT_24);
+               LCD_SetTextColor(LCD_COLOR_WHITE);
+               LCD_SetBackColor(pI->color);
+
+               STRING_COPY(buffTmp, pI->label);
+               buffTmp[1] = '\0';
+               len = LCD_FONT_24.Width;
+               height = LCD_FONT_24.Height;
+               LCD_DisplayStringAt(LCD_GetXSize() - offset + pos + ((iconSize / 2) - (len / 2)) + 1, 20 + (i * (iconSize + 20)) + ((iconSize / 2) - (height / 2)) + 2, (STRING)buffTmp, LEFT_MODE);
+
+               LCD_SetFont(&LCD_FONT_8);
+               LCD_SetTextColor(LCD_COLOR_GRAY);
+               LCD_SetBackColor(LCD_COLOR_BACKGROUND_PAGE);
+
+               len = STRING_LEN(pI->label);
+               len *= LCD_FONT_8.Width;
+               pos = (widthSlide / 2) - (len / 2);
+
+               LCD_DisplayStringAt(LCD_GetXSize() - offset + pos, 23 + iconSize + (i * (iconSize + 20)), (STRING)pI->label, LEFT_MODE);
+            }
+         }
+      }
    }
-
-   LCD_DrawVLine(LCD_GetXSize() - 1, 0, LCD_GetYSize());
-
-   LCD_SetTextColor(LCD_COLOR_BLACK);
-   LCD_DrawLine(LCD_GetXSize() - 4, 130, LCD_GetXSize() - 8, 135);
-   LCD_DrawLine(LCD_GetXSize() - 8, 135, LCD_GetXSize() - 4, 140);
 }
 
 //-----------------------------------------------------------------------------
