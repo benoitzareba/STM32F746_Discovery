@@ -1,11 +1,11 @@
 //=============================================================================
 //
 // PROJECT     :  STM32F746-Discovery
-// HEADER      :  Display.h
+// HEADER      :  CircleProgress.h
 //
 //=============================================================================
-#ifndef _DISPLAY_H_
-#define _DISPLAY_H_
+#ifndef _CIRCLE_PROGRESS_H_
+#define _CIRCLE_PROGRESS_H_
 
 //=============================================================================
 //--- DECLARATIONS
@@ -15,21 +15,25 @@
 // Included files
 //-----------------------------------------------------------------------------
 #include "TypeDefs.h"
-#include "Screen.h"
-#include "LCD.h"
+#include "Widgets.h"
 
 //-----------------------------------------------------------------------------
 // Constants : defines and enumerations
 //-----------------------------------------------------------------------------
-enum
-{
-   CLOSE = 0,
-   OPEN
-};
 
 //-----------------------------------------------------------------------------
 // Structures and types
 //-----------------------------------------------------------------------------
+typedef struct
+{
+   UINT32   color;
+   UINT32   backgroundColor;
+   UINT32   maskColor;
+   UINT8    radius;
+   UINT8    currentValue;
+   FLOAT32  oldValue;
+   BOOL     used;
+} s_WIDGET_CIRCLE_PROGRESS;
 
 //-----------------------------------------------------------------------------
 // External variables and functions
@@ -38,11 +42,8 @@ enum
 //---------- Variables ----------
 
 //---------- Functions ----------
-void DISP_Initialize    (void);
-void DISP_ShowHeader    (s_HEADER* h);
-void DISP_ShowFooter    (s_FOOTER* f);
-void DISP_ShowBodyZone  (void);
-void DISP_ShowSlideMenu (s_SLIDE* s);
-void DISP_ShowPopup     (s_POPUP* p, UINT32 color);
+BOOL WIDGET_CircleProgressGetDefaultFuncs (s_WIDGET *pWdgt);
 
+#warning : debug
+void UPDATE_CIRCLE_PROGRESS (UINT16 valueProgress);
 #endif

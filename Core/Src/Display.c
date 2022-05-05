@@ -47,6 +47,20 @@
 //=============================================================================
 
 //-----------------------------------------------------------------------------
+// FONCTION    : DISP_Initialize
+//
+// DESCRIPTION : Initialize the display
+//-----------------------------------------------------------------------------
+void DISP_Initialize (void)
+{
+   //--- LCD Initialization
+   LCD_Init();
+
+   //--- Clear
+   LCD_Clear(LCD_COLOR_BACKGROUND_PAGE);
+}
+
+//-----------------------------------------------------------------------------
 // FONCTION    : DISP_ShowHeader
 //
 // DESCRIPTION : Draw header
@@ -125,6 +139,22 @@ void DISP_ShowFooter (s_FOOTER* f)
          LCD_DrawRectButton(r->x, r->y, buttonWidth, buttonHeight, b->color, (CHAR8*)b->txt, b->selected);
       }
    }
+}
+
+//-----------------------------------------------------------------------------
+// FONCTION    : DISP_ShowBodyZone
+//
+// DESCRIPTION : Draw body zone
+//-----------------------------------------------------------------------------
+void DISP_ShowBodyZone (void)
+{
+   const UINT8 posY = 50;
+   const UINT8 height = 170;
+
+   LCD_SetTextColor(LCD_COLOR_BACKGROUND_ITEM);
+   LCD_FillRect(0, posY, LCD_GetXSize(), height);
+   LCD_SetTextColor(LCD_COLOR_GRAY);
+   LCD_DrawHLine(0, posY, LCD_GetXSize());
 }
 
 //-----------------------------------------------------------------------------

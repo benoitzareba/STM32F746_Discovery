@@ -1,11 +1,11 @@
 //=============================================================================
 //
 // PROJECT     :  STM32F746-Discovery
-// HEADER      :  Display.h
+// HEADER      :  DispWidgets.h
 //
 //=============================================================================
-#ifndef _DISPLAY_H_
-#define _DISPLAY_H_
+#ifndef _DISP_WIDGETS_H_
+#define _DISP_WIDGETS_H_
 
 //=============================================================================
 //--- DECLARATIONS
@@ -14,18 +14,17 @@
 //-----------------------------------------------------------------------------
 // Included files
 //-----------------------------------------------------------------------------
+#include <SlideBar.h>
 #include "TypeDefs.h"
-#include "Screen.h"
-#include "LCD.h"
+#include "ToggleSwitch.h"
+#include "RadioButton.h"
+#include "CheckBox.h"
+#include "NumberInput.h"
+#include "CircleProgress.h"
 
 //-----------------------------------------------------------------------------
 // Constants : defines and enumerations
 //-----------------------------------------------------------------------------
-enum
-{
-   CLOSE = 0,
-   OPEN
-};
 
 //-----------------------------------------------------------------------------
 // Structures and types
@@ -38,11 +37,11 @@ enum
 //---------- Variables ----------
 
 //---------- Functions ----------
-void DISP_Initialize    (void);
-void DISP_ShowHeader    (s_HEADER* h);
-void DISP_ShowFooter    (s_FOOTER* f);
-void DISP_ShowBodyZone  (void);
-void DISP_ShowSlideMenu (s_SLIDE* s);
-void DISP_ShowPopup     (s_POPUP* p, UINT32 color);
+void DISP_WDGT_ShowSlide            (UINT16 posX, UINT16 posY, s_WIDGET_SLIDE_BAR *pSlide, BOOL isFirstTime);
+void DISP_WDGT_ShowToggleSwitch     (UINT16 posX, UINT16 posY, s_WIDGET_TOGGLE_SWITCH *pToggleSwitch, BOOL isFirstTime);
+void DISP_WDGT_ShowRadioButton      (UINT16 posX, UINT16 posY, s_WIDGET_RADIOBUTTON *pRadioButton, BOOL isFirstTime);
+void DISP_WDGT_ShowCheckBox         (UINT16 posX, UINT16 posY, s_WIDGET_CHECKBOX *pCheckBox, BOOL isFirstTime);
+void DISP_WDGT_ShowNumberInput      (UINT16 posX, UINT16 posY, s_WIDGET_NUMBER_INPUT *pCheckBox, BOOL isFirstTime);
+void DISP_WDGT_ShowCircleProgress   (UINT16 posX, UINT16 posY, s_WIDGET_CIRCLE_PROGRESS *pNumberInput, BOOL isFirstTime);
 
 #endif

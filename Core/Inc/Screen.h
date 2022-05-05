@@ -46,6 +46,7 @@ enum
 
 #define NB_BUTTON_MAX                  4
 #define NB_ICON_MAX                    4
+#define NB_ITEM_MAX                    8
 
 #define HASH_DISPSCREEN1               184555610
 #define HASH_DISPSCREEN2               184555621
@@ -102,10 +103,10 @@ typedef struct //--- s_SCREEN
    SCREEN_DISP_FUNC     disp;
    SCREEN_UPDATE_FUNC   update;
    UINT32               color;
-   s_HEADER             *header;
-   s_FOOTER             *footer;
-   s_POPUP              *popup;
-   s_SLIDE              *slide;
+   s_HEADER*            header;
+   s_FOOTER*            footer;
+   s_POPUP*             popup;
+   s_SLIDE*             slide;
 } s_SCREEN;
 
 //-----------------------------------------------------------------------------
@@ -148,4 +149,6 @@ void SCREEN_RefreshCurrent    (void);
 void SCREEN_Initialize        (void);
 void SCREEN_TaskRun           (void *argument);
 
+#warning: debug
+void UPDATE_WIDGET (void);
 #endif

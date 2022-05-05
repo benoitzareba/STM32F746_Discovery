@@ -111,8 +111,6 @@ typedef struct
 //---------- Functions ----------
 UINT8    LCD_Init                      (void);
 UINT8    LCD_DeInit                    (void);
-UINT8    LCD_Init                      (void);
-UINT8    LCD_DeInit                    (void);
 UINT32   LCD_GetXSize                  (void);
 UINT32   LCD_GetYSize                  (void);
 void     LCD_SetXSize                  (UINT32 imageWidthPixels);
@@ -152,6 +150,7 @@ void     LCD_DrawLine                  (UINT16 x1, UINT16 y1, UINT16 x2, UINT16 
 void     LCD_DrawRect                  (UINT16 Xpos, UINT16 Ypos, UINT16 Width, UINT16 Height);
 void     LCD_DrawCircle                (UINT16 Xpos, UINT16 Ypos, UINT16 Radius);
 void     LCD_DrawFilledCircle          (UINT16 Xpos, UINT16 Ypos, UINT16 Radius);
+void     LCD_DrawProgressCircle        (UINT16 posX, UINT16 posY, UINT8 width, FLOAT32 fromProgress, FLOAT32 toProgress, UINT16 radius, UINT32 color);
 void     LCD_DrawPolygon               (pPoint Points, UINT16 PointCount);
 void     LCD_DrawEllipse               (INT32 Xpos, INT32 Ypos, INT32 XRadius, INT32 YRadius);
 void     LCD_DrawBitmap                (UINT32 Xpos, UINT32 Ypos, UINT8 *pbmp);

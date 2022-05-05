@@ -14,13 +14,14 @@
 // Included files
 //-----------------------------------------------------------------------------
 #include "LCD.h"
+#include <math.h>
 
 //-----------------------------------------------------------------------------
 // Constants : defines and enumerations
 //-----------------------------------------------------------------------------
-#define POLY_X(Z)                      ((INT32)((Points + Z)->X))
-#define POLY_Y(Z)                      ((INT32)((Points + Z)->Y))
-#define ABS(X)                         ((X) > 0 ? (X) : -(X))
+#define POLY_X(Z)                   ((INT32)((Points + Z)->X))
+#define POLY_Y(Z)                   ((INT32)((Points + Z)->Y))
+#define ABS(X)                      ((X) > 0 ? (X) : -(X))
 
 //-----------------------------------------------------------------------------
 // Structures and types
@@ -1107,14 +1108,97 @@ void LCD_DrawCircle (UINT16 Xpos, UINT16 Ypos, UINT16 Radius)
 //
 // DESCRIPTION : Draws a circle.
 //-----------------------------------------------------------------------------
-void LCD_DrawFilledCircle (UINT16 Xpos, UINT16 Ypos, UINT16 Radius)
+void LCD_DrawFilledCircle (UINT16 x0, UINT16 y0, UINT16 radius)
 {
-   UINT8 i;
+   INT32 x;
+   INT32 y;
+   INT32 d;
+   INT32 deltaE;
+   INT32 deltaNE;
 
-   for (i = Radius; i > 0; i--)
+   x = 0;
+   y = radius;
+   d = 1 - radius;
+   deltaE = 3;
+   deltaNE = -2 * radius + 5;
+
+   LCD_DrawHLine(x0 - x, y0 - y, x + x); /* Top */
+   LCD_DrawHLine(x0 - y, y0 - x, y + y); /* Upper middle */
+
+   LCD_DrawHLine(x0 - y, y0 + x, y + y); /* Lower middle */
+   LCD_DrawHLine(x0 - x, y0 + y, x + x); /* Bottom */
+
+   while (y > x)
    {
-      LCD_DrawCircle(Xpos, Ypos, i);
+       if (d < 0)
+       {
+           /* East */
+           d += deltaE;
+           deltaE += 2;
+           deltaNE += 2;
+       }
+       else
+       {
+           /* Northeast */
+           d += deltaNE;
+           deltaE += 2;
+           deltaNE += 4;
+           --y;
+       }
+       ++x;
+
+         LCD_DrawHLine(x0 - x, y0 - y, x + x); /* Top */
+         LCD_DrawHLine(x0 - y, y0 - x, y + y); /* Upper middle */
+
+         LCD_DrawHLine(x0 - y, y0 + x, y + y); /* Lower middle */
+         LCD_DrawHLine(x0 - x, y0 + y, x + x); /* Bottom */
    }
+}
+
+//-----------------------------------------------------------------------------
+// FONCTION    : LCD_DrawProgressCircle
+//
+// DESCRIPTION : Draws a progress circle
+//-----------------------------------------------------------------------------
+void LCD_DrawProgressCircle (UINT16 posX, UINT16 posY, UINT8 width, FLOAT32 fromProgress, FLOAT32 toProgress, UINT16 radius, UINT32 color)
+{
+   FLOAT32 step = 2*M_PI/100.0;
+   FLOAT32 angle;
+   FLOAT32 from;
+   FLOAT32 to;
+   FLOAT32 x0, y0, x1, y1;
+
+   UINT32 cpt = 0;
+
+   if (fromProgress <= toProgress)
+   {
+      from = fromProgress * step - (M_PI/2);
+      to = toProgress * step - (M_PI/2);
+   }
+   else
+   {
+      from = toProgress * step -(M_PI/2);
+      to = fromProgress * step - (M_PI/2);
+   }
+
+   for (angle = from; angle < to; angle += 0.01)
+   {
+       x0 = (radius * 0.8) * cos(angle);
+       y0 = (radius * 0.8) * sin(angle);
+
+       x1 = radius * cos(angle);
+       y1 = radius * sin(angle);
+
+       LCD_SetTextColor(color);
+       LCD_DrawLine(posX + x0, posY + y0, posX + x1, posY + y1);
+
+       //LCD_DrawPixel(posX + x0, posY + y0, color);
+       cpt++;
+   }
+
+   if (cpt % 2 == 0)
+      LCD_DrawPixel(posX + x0, posY + y0, color);
+
 }
 
 //-----------------------------------------------------------------------------
@@ -1275,6 +1359,9 @@ void LCD_DrawBitmap (UINT32 Xpos, UINT32 Ypos, UINT8 *pbmp)
 //-----------------------------------------------------------------------------
 void LCD_FillRect (UINT16 Xpos, UINT16 Ypos, UINT16 Width, UINT16 Height)
 {
+   UINT16 y;
+
+   /*
    UINT32 x_address = 0;
 
    //--- Set the text color
@@ -1294,6 +1381,10 @@ void LCD_FillRect (UINT16 Xpos, UINT16 Ypos, UINT16 Width, UINT16 Height)
 
    //--- Fill the rectangle
    _FillBuffer(ActiveLayer, (UINT32 *)x_address, Width, Height, (LCD_GetXSize() - Width), DrawProp[ActiveLayer].TextColor);
+   */
+
+   for (y = 0; y < Height; y++)
+      LCD_DrawHLine(Xpos, y + Ypos, Width);
 }
 
 //-----------------------------------------------------------------------------
@@ -1303,6 +1394,7 @@ void LCD_FillRect (UINT16 Xpos, UINT16 Ypos, UINT16 Width, UINT16 Height)
 //-----------------------------------------------------------------------------
 void LCD_FillCircle (UINT16 Xpos, UINT16 Ypos, UINT16 Radius)
 {
+#if 0
    INT32  decision;
    UINT32 current_x;
    UINT32 current_y;
@@ -1343,6 +1435,7 @@ void LCD_FillCircle (UINT16 Xpos, UINT16 Ypos, UINT16 Radius)
 
    LCD_SetTextColor(DrawProp[ActiveLayer].TextColor);
    LCD_DrawCircle(Xpos, Ypos, Radius);
+#endif
 }
 
 //-----------------------------------------------------------------------------

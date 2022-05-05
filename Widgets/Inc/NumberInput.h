@@ -1,11 +1,11 @@
 //=============================================================================
 //
 // PROJECT     :  STM32F746-Discovery
-// HEADER      :  Display.h
+// HEADER      :  NumberInput.h
 //
 //=============================================================================
-#ifndef _DISPLAY_H_
-#define _DISPLAY_H_
+#ifndef _NUMBER_INPUT_H_
+#define _NUMBER_INPUT_H_
 
 //=============================================================================
 //--- DECLARATIONS
@@ -15,21 +15,24 @@
 // Included files
 //-----------------------------------------------------------------------------
 #include "TypeDefs.h"
-#include "Screen.h"
-#include "LCD.h"
+#include "Widgets.h"
 
 //-----------------------------------------------------------------------------
 // Constants : defines and enumerations
 //-----------------------------------------------------------------------------
-enum
-{
-   CLOSE = 0,
-   OPEN
-};
 
 //-----------------------------------------------------------------------------
 // Structures and types
 //-----------------------------------------------------------------------------
+typedef struct
+{
+   UINT16   width;
+   UINT16   height;
+   UINT32   color;
+   UINT32   backgroundColor;
+   INT16    currentValue;
+   BOOL     used;
+} s_WIDGET_NUMBER_INPUT;
 
 //-----------------------------------------------------------------------------
 // External variables and functions
@@ -38,11 +41,8 @@ enum
 //---------- Variables ----------
 
 //---------- Functions ----------
-void DISP_Initialize    (void);
-void DISP_ShowHeader    (s_HEADER* h);
-void DISP_ShowFooter    (s_FOOTER* f);
-void DISP_ShowBodyZone  (void);
-void DISP_ShowSlideMenu (s_SLIDE* s);
-void DISP_ShowPopup     (s_POPUP* p, UINT32 color);
+BOOL WIDGET_NumberInputGetDefaultFuncs (s_WIDGET *pWdgt);
 
+#warning : debug
+void UPDATE_NUMBER_INPUT (INT16 valInput);
 #endif
