@@ -4,6 +4,11 @@ Projet basé sur microcontrôleur STM32F746NGH
 Création d'un projet temps réel avec une interface tactile et dynamique pouvant s'utiliser pour différentes applications.
 Le projet est basé sur FreeRTOS.
 
+Benoît ZAREBA
+
 ![POWERPNT_r2lN0lqyQ0](https://user-images.githubusercontent.com/74196980/120498858-da165a80-c3bf-11eb-9320-1c4cfe44f881.png)
 
-Benoît ZAREBA
+![Page 1](https://user-images.githubusercontent.com/74196980/177157465-a16e118f-d720-48de-b3e6-39380b9ba14f.jpg)
+![Page 2](https://user-images.githubusercontent.com/74196980/177157523-45dc2741-6080-465a-9a24-eff0f2f42f07.gif)
+![Page 3](https://user-images.githubusercontent.com/74196980/177157646-80114c4d-11a8-4df6-a1bf-bb5c59492873.gif)
+![Page 4](https://user-images.githubusercontent.com/74196980/177157723-cdb18125-43ed-42da-8c45-e713c6934d5c.gif)
