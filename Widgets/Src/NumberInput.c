@@ -195,7 +195,25 @@ BOOL WIDGET_NumberInputGetDefaultFuncs (s_WIDGET *pWdgt)
 }
 
 #warning : debug
-void UPDATE_NUMBER_INPUT (INT16 valInput)
+void UPDATE_NUMBER_INPUT (INT16 unused)
 {
-   _numberInput[0].currentValue = valInput;
+   UINT8 i;
+
+   static BOOL way[NB_NUMBER_INPUT_MAX] = {FALSE};
+
+   for (i = 0; i < NB_NUMBER_INPUT_MAX; i++)
+   {
+      if (way[i] == FALSE)
+      {
+         _numberInput[i].currentValue += 1;
+         if (_numberInput[i].currentValue >= 100)
+            way[i] = TRUE;
+      }
+      else
+      {
+         _numberInput[i].currentValue -= 1;
+         if (_numberInput[i].currentValue == 0)
+            way[i] = FALSE;
+      }
+   }
 }

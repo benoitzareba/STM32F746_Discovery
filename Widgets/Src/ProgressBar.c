@@ -1,7 +1,7 @@
 //=============================================================================
 //
 // PROJECT     :  STM32F746-Discovery
-// MODULE      :  RadioButton.c
+// MODULE      :  ProgressBar.c
 // AUTHOR      :  Benoit ZAREBA
 //
 //=============================================================================
@@ -13,13 +13,13 @@
 //-----------------------------------------------------------------------------
 // Included files
 //-----------------------------------------------------------------------------
-#include "RadioButton.h"
+#include "ProgressBar.h"
 #include "DispWidgets.h"
 
 //-----------------------------------------------------------------------------
 // Constants : defines and enumerations
 //-----------------------------------------------------------------------------
-#define NB_RADIO_BUTTON_MAX      6
+#define NB_PROGRESS_BAR_MAX               5
 
 //-----------------------------------------------------------------------------
 // Structures and types
@@ -38,40 +38,40 @@
 //-----------------------------------------------------------------------------
 
 //---------- Variables ----------
-static UINT8 _count = 0;
-static s_WIDGET_RADIOBUTTON _radioButton[NB_RADIO_BUTTON_MAX];
+static UINT8 _count;
+static s_WIDGET_PROGRESS_BAR _progressBar[NB_PROGRESS_BAR_MAX];
 
 //---------- Functions ----------
-static void*   _NewRadioButton      (e_WIDGET_MODE mode);
-static BOOL    _InitRadioButton     (s_WIDGET *pWdgt, void* ptr);
-static BOOL    _DispRadioButton     (s_WIDGET *pWdgt);
-static BOOL    _UpdateRadioButton   (s_WIDGET *pWdgt, void* ptr);
-static BOOL    _DeleteRadioButton   (s_WIDGET *pWdgt);
+static void*   _NewProgressBar      (e_WIDGET_MODE mode);
+static BOOL    _InitProgressBar     (s_WIDGET *pWdgt, void* ptr);
+static BOOL    _DispProgressBar     (s_WIDGET *pWdgt);
+static BOOL    _UpdateProgressBar   (s_WIDGET *pWdgt, void* ptr);
+static BOOL    _DeleteProgressBar   (s_WIDGET *pWdgt);
 
 //=============================================================================
 //--- DEFINITIONS
 //=============================================================================
 
 //-----------------------------------------------------------------------------
-// FONCTION    :  _NewRadioButton
+// FONCTION    :  _NewProgressBar
 //
 // DESCRIPTION : Chargement du widget
 //-----------------------------------------------------------------------------
-static void *_NewRadioButton (e_WIDGET_MODE mode)
+static void *_NewProgressBar (e_WIDGET_MODE mode)
 {
    UINT8 i;
-   s_WIDGET_RADIOBUTTON *pRet = NULL;
+   s_WIDGET_PROGRESS_BAR *pRet = NULL;
 
-   if (_count < NB_RADIO_BUTTON_MAX)
+   if (_count < NB_PROGRESS_BAR_MAX)
    {
       //--- Cherche un emplacement libre
-      for (i = 0; i < NB_RADIO_BUTTON_MAX; i++)
+      for (i = 0; i < NB_PROGRESS_BAR_MAX; i++)
       {
-         if (_radioButton[i].used == FALSE)
+         if (_progressBar[i].used == FALSE)
          {
             _count++;
-            _radioButton[i].used = TRUE;
-            pRet = &_radioButton[i];
+            _progressBar[i].used = TRUE;
+            pRet = &_progressBar[i];
             break;
          }
       }
@@ -81,32 +81,36 @@ static void *_NewRadioButton (e_WIDGET_MODE mode)
 }
 
 //-----------------------------------------------------------------------------
-// FONCTION    :  _InitRadioButton
+// FONCTION    :  _InitProgressBar
 //
 // DESCRIPTION : Initialisation du widget
 //-----------------------------------------------------------------------------
-static BOOL _InitRadioButton (s_WIDGET *pWdgt, void* ptr)
+static BOOL _InitProgressBar (s_WIDGET *pWdgt, void* ptr)
 {
-   s_WIDGET_RADIOBUTTON *pRadioButton = (s_WIDGET_RADIOBUTTON *)pWdgt->param;
-   s_WIDGET_RADIOBUTTON *param = (s_WIDGET_RADIOBUTTON *)ptr;
+   s_WIDGET_PROGRESS_BAR *pProgressBar = (s_WIDGET_PROGRESS_BAR *)pWdgt->param;
+   s_WIDGET_PROGRESS_BAR *param        = (s_WIDGET_PROGRESS_BAR *)ptr;
 
-   //--- Affectation des parametres du widget
-   pRadioButton->currentValue    = param->currentValue;
-   pRadioButton->color           = param->color;
-   pRadioButton->backgroundColor = param->backgroundColor;
+   pProgressBar->backgroundColor = param->backgroundColor;
+   pProgressBar->baseColor       = param->baseColor;
+   pProgressBar->color           = param->color;
+   pProgressBar->currentValue    = param->currentValue;
+   pProgressBar->height          = param->height;
+   pProgressBar->width           = param->width;
+   pProgressBar->outline         = param->outline;
+   pProgressBar->cursorValue     = param->cursorValue;
 
    return TRUE;
 }
 
 //-----------------------------------------------------------------------------
-// FONCTION    :  _DispRadioButton
+// FONCTION    :  _DispProgressBar
 //
 // DESCRIPTION :
 //-----------------------------------------------------------------------------
-static BOOL _DispRadioButton (s_WIDGET *pWdgt)
+static BOOL _DispProgressBar (s_WIDGET *pWdgt)
 {
    BOOL isDisp = FALSE;
-   s_WIDGET_RADIOBUTTON  *pSlide = (s_WIDGET_RADIOBUTTON *)pWdgt->param;
+   s_WIDGET_SLIDE_BAR  *pSlide = (s_WIDGET_SLIDE_BAR *)pWdgt->param;
 
    switch (pWdgt->state)
    {
@@ -114,7 +118,7 @@ static BOOL _DispRadioButton (s_WIDGET *pWdgt)
       case TO_DISP_WIDGET_STATE :
       {
          //--- Affichage du widget
-         DISP_WDGT_ShowRadioButton(pWdgt->posX, pWdgt->posY, pSlide, pWdgt->isFirstTime);
+         DISP_WDGT_ShowProgressBar(pWdgt->posX, pWdgt->posY, pSlide, pWdgt->isFirstTime);
          isDisp = TRUE;
          break;
       }
@@ -127,15 +131,15 @@ static BOOL _DispRadioButton (s_WIDGET *pWdgt)
 }
 
 //-----------------------------------------------------------------------------
-// FONCTION    :  _UpdateRadioButton
+// FONCTION    :  _UpdateProgressBar
 //
 // DESCRIPTION :
 //-----------------------------------------------------------------------------
-static BOOL _UpdateRadioButton (s_WIDGET *pWdgt, void* ptr)
+static BOOL _UpdateProgressBar (s_WIDGET *pWdgt, void* ptr)
 {
    //BOOL isEvent = FALSE;
    BOOL isUpdated = FALSE;
-   //s_WIDGET_RADIOBUTTON *pSlide = (s_WIDGET_SLIDE *)pWdgt->param;
+   //s_WIDGET_SLIDE *pSlide = (s_WIDGET_SLIDE *)pWdgt->param;
 
    switch (pWdgt->state)
    {
@@ -161,34 +165,58 @@ static BOOL _UpdateRadioButton (s_WIDGET *pWdgt, void* ptr)
 }
 
 //-----------------------------------------------------------------------------
-// FONCTION    :  _DeleteRadioButton
+// FONCTION    :  _DeleteProgressBar
 //
 // DESCRIPTION : Dechargement du widget
 //-----------------------------------------------------------------------------
-static BOOL _DeleteRadioButton (s_WIDGET *pWdgt)
+static BOOL _DeleteProgressBar (s_WIDGET *pWdgt)
 {
    return TRUE;
 }
 
 //-----------------------------------------------------------------------------
-// FONCTION    :  WIDGET_RadioButtonGetDefaultFuncs
+// FONCTION    :  WIDGET_ProgressBarGetDefaultFuncs
 //
 // DESCRIPTION :  Recupere les pointers de fonctions par defaut du widget
 //-----------------------------------------------------------------------------
-BOOL WIDGET_RadioButtonGetDefaultFuncs (s_WIDGET *pWdgt)
+BOOL WIDGET_ProgressBarGetDefaultFuncs (s_WIDGET *pWdgt)
 {
    BOOL  isGeted = FALSE;
 
    if (pWdgt != NULL)
    {
-      pWdgt->func.new     = (void*)_NewRadioButton;
-      pWdgt->func.init    = _InitRadioButton;
-      pWdgt->func.disp    = _DispRadioButton;
-      pWdgt->func.update  = _UpdateRadioButton;
-      pWdgt->func.delete  = _DeleteRadioButton;
+      pWdgt->func.new     = (void*)_NewProgressBar;
+      pWdgt->func.init    = _InitProgressBar;
+      pWdgt->func.disp    = _DispProgressBar;
+      pWdgt->func.update  = _UpdateProgressBar;
+      pWdgt->func.delete  = _DeleteProgressBar;
 
       isGeted = TRUE;
    }
 
    return isGeted;
+}
+
+#warning : debug
+void UPDATE_PROGRESS_BAR (UINT8 unused)
+{
+   UINT8 i;
+
+   static BOOL way[NB_PROGRESS_BAR_MAX] = {FALSE};
+
+   for (i = 0; i < NB_PROGRESS_BAR_MAX; i++)
+   {
+      if (way[i] == FALSE)
+      {
+         _progressBar[i].currentValue += 0.01;
+         if (_progressBar[i].currentValue >= 1.00 && _progressBar[i].currentValue < 1.05)
+            way[i] = TRUE;
+      }
+      else
+      {
+         _progressBar[i].currentValue -= 0.01;
+         if (_progressBar[i].currentValue <= 0.01)
+            way[i] = FALSE;
+      }
+   }
 }

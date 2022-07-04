@@ -64,9 +64,7 @@ void LED_TaskRun (void *argument)
    BOOL  receivedButtonState;
    osStatus_t eventStatus;
 
-   static BOOL way = TRUE;
-   static BOOL slideM = TRUE;
-   static FLOAT32 valSlideBar = 0.0;
+   BOOL slideM = TRUE;
 
    //--- Remove compiler warning about unused parameter.
    (void)argument;
@@ -81,29 +79,11 @@ void LED_TaskRun (void *argument)
          //--- Drive output led pin
          HAL_GPIO_WritePin(GPIOI, GPIO_PIN_1, receivedButtonState);
 
-#warning : debug
-         //SCREEN_UpdateSlideMenu(slideM);
-
-         if (way == TRUE)
-            valSlideBar += 1;
-         else
-            valSlideBar -= 1;
-
-
-         if (valSlideBar == 100)
-            way = FALSE;
-         else if (valSlideBar == 0)
-            way = TRUE;
-
-         slideM = !slideM;
-
-         UPDATE_SLIDE_BAR(valSlideBar);
-         UPDATE_TOGGLE_SWITCH(slideM);
-         UPDATE_RADIO_BUTTON(slideM);
-         UPDATE_CHECK_BOX(slideM);
-         UPDATE_NUMBER_INPUT((UINT16)valSlideBar);
-         UPDATE_CIRCLE_PROGRESS((UINT16)valSlideBar);
-         UPDATE_WIDGET();
+         if (receivedButtonState == TRUE)
+         {
+            SCREEN_UpdateSlideMenu(slideM);
+            slideM = !slideM;
+         }
       }
    }
 }

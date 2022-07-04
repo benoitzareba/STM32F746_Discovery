@@ -67,3 +67,21 @@ UINT32 UTILS_CalcHash (STRING s)
 
    return hash;
 }
+
+//-----------------------------------------------------------------------------
+// FONCTION    :  UTILS_FormatWidgetValue
+//
+// DESCRIPTION :
+//-----------------------------------------------------------------------------
+void UTILS_FormatWidgetValue (CHAR8* s, UINT8 len, UINT32 value)
+{
+   UINT8 i;
+
+   for (i = 1; i <= len; i++)
+   {
+      s[len - i] = (UINT8)((value % 10UL) + '0');
+      value /= 10;
+   }
+
+   s[i - 1] = '\0';
+}

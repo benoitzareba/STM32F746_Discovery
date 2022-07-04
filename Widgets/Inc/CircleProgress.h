@@ -26,13 +26,14 @@
 //-----------------------------------------------------------------------------
 typedef struct
 {
-   UINT32   color;
-   UINT32   backgroundColor;
-   UINT32   maskColor;
-   UINT8    radius;
-   UINT8    currentValue;
-   FLOAT32  oldValue;
-   BOOL     used;
+   UINT32      color;
+   UINT32      backgroundColor;
+   UINT32      maskColor;
+   UINT8       radius;
+   UINT8       currentValue;
+   UINT8       oldValue;
+   BOOL        used;
+   BOOL        dispVal;
 } s_WIDGET_CIRCLE_PROGRESS;
 
 //-----------------------------------------------------------------------------
@@ -45,5 +46,5 @@ typedef struct
 BOOL WIDGET_CircleProgressGetDefaultFuncs (s_WIDGET *pWdgt);
 
 #warning : debug
-void UPDATE_CIRCLE_PROGRESS (UINT16 valueProgress);
+void UPDATE_CIRCLE_PROGRESS (UINT8 unused);
 #endif

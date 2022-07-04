@@ -96,6 +96,7 @@ static BOOL _InitCircleProgress (s_WIDGET *pWdgt, void* ptr)
    pCircleProgress->backgroundColor = param->backgroundColor;
    pCircleProgress->maskColor       = param->maskColor;
    pCircleProgress->radius          = param->radius;
+   pCircleProgress->dispVal         = param->dispVal;
 
    return TRUE;
 }
@@ -196,14 +197,27 @@ BOOL WIDGET_CircleProgressGetDefaultFuncs (s_WIDGET *pWdgt)
 }
 
 #warning : debug
-void UPDATE_CIRCLE_PROGRESS (UINT16 valueProgress)
+void UPDATE_CIRCLE_PROGRESS (UINT8 unused)
 {
-   _circleProgress[0].oldValue = _circleProgress[0].currentValue;
-   _circleProgress[0].currentValue = valueProgress;
+   UINT8 i;
 
-   _circleProgress[1].oldValue = 100 - valueProgress + 1;
-   _circleProgress[1].currentValue = _circleProgress[1].oldValue - 1;
+   static BOOL way[NB_CIRCLE_PROGRESS_MAX] = {FALSE};
 
-   _circleProgress[2].oldValue = _circleProgress[2].currentValue;
-   _circleProgress[2].currentValue = valueProgress;
+   for (i = 0; i < NB_CIRCLE_PROGRESS_MAX; i++)
+   {
+      _circleProgress[i].oldValue = _circleProgress[i].currentValue;
+
+      if (way[i] == FALSE)
+      {
+         _circleProgress[i].currentValue += 1;
+         if (_circleProgress[i].currentValue >= 100)
+            way[i] = TRUE;
+      }
+      else
+      {
+         _circleProgress[i].currentValue -= 1;
+         if (_circleProgress[i].currentValue == 0)
+            way[i] = FALSE;
+      }
+   }
 }

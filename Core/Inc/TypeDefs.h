@@ -102,6 +102,12 @@ typedef union //--- u_UINT16
    } bits;
 } u_UINT16;
 
+typedef union //--- u_UINT32
+{
+   UINT8  tab[sizeof(UINT32)];
+   UINT32 val;
+} u_UINT32;
+
 typedef struct //--- s_RECT
 {
    UINT16               x;

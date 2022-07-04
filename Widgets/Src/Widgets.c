@@ -18,6 +18,11 @@
 #include "SlideBar.h"
 #include "CheckBox.h"
 #include "RadioButton.h"
+#include "NumberInput.h"
+#include "CircleProgress.h"
+#include "ProgressBar.h"
+#include "ButtonWidget.h"
+#include "TextInput.h"
 
 //-----------------------------------------------------------------------------
 // Constants : defines and enumerations
@@ -168,6 +173,24 @@ static BOOL _GetDefaultFuncs (s_WIDGET *pWdgt)
             break;
          }
 
+         case WIDGET_PROGRESS_BAR_TYPE:
+         {
+            found = WIDGET_ProgressBarGetDefaultFuncs(pWdgt);
+            break;
+         }
+
+         case WIDGET_BUTTON_TYPE:
+         {
+            found = WIDGET_ButtonGetDefaultFuncs(pWdgt);
+            break;
+         }
+
+         case WIDGET_TEXT_INPUT_TYPE:
+         {
+            found = WIDGET_TextInputGetDefaultFuncs(pWdgt);
+            break;
+         }
+
          default:
             break;
       }
@@ -250,6 +273,11 @@ BOOL WIDGET_Init (s_WIDGET *pWdgt, void *ptr)
             //--- Suppression du widget
             WIDGET_Delete(pWdgt);
          }
+      }
+      else
+      {
+         pWdgt->isUpToDate    = FALSE;
+         pWdgt->isFirstTime   = TRUE;
       }
    }
 
@@ -382,5 +410,3 @@ s_WIDGET *WIDGET_Alloc (e_WIDGET_TYPE type, e_WIDGET_MODE mode)
 
    return pWdgt;
 }
-
-

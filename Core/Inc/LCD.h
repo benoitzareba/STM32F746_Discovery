@@ -86,6 +86,14 @@ typedef enum
    LEFT_MODE               = 0x03
 } Text_AlignModeTypdef;
 
+enum
+{
+   LEFT_DIR = 0,
+   DOWN_DIR,
+   RIGHT_DIR,
+   UP_DIR
+};
+
 //-----------------------------------------------------------------------------
 // Structures and types
 //-----------------------------------------------------------------------------
@@ -150,7 +158,7 @@ void     LCD_DrawLine                  (UINT16 x1, UINT16 y1, UINT16 x2, UINT16 
 void     LCD_DrawRect                  (UINT16 Xpos, UINT16 Ypos, UINT16 Width, UINT16 Height);
 void     LCD_DrawCircle                (UINT16 Xpos, UINT16 Ypos, UINT16 Radius);
 void     LCD_DrawFilledCircle          (UINT16 Xpos, UINT16 Ypos, UINT16 Radius);
-void     LCD_DrawProgressCircle        (UINT16 posX, UINT16 posY, UINT8 width, FLOAT32 fromProgress, FLOAT32 toProgress, UINT16 radius, UINT32 color);
+void     LCD_DrawProgressCircle        (UINT16 posX, UINT16 posY, FLOAT32 width, UINT8 fromProgress, UINT8 toProgress, UINT8 radius, UINT32 color);
 void     LCD_DrawPolygon               (pPoint Points, UINT16 PointCount);
 void     LCD_DrawEllipse               (INT32 Xpos, INT32 Ypos, INT32 XRadius, INT32 YRadius);
 void     LCD_DrawBitmap                (UINT32 Xpos, UINT32 Ypos, UINT8 *pbmp);
@@ -167,6 +175,7 @@ void     LCD_DrawRectWithThickness     (UINT16 Xpos, UINT16 Ypos, UINT16 Width, 
 void     LCD_DrawRectButton            (UINT16 Xpos, UINT16 Ypos, UINT16 Width, UINT16 Height, UINT32 color, CHAR8 *txt, BOOL selected);
 void     LCD_DrawHLineThickness        (UINT16 Xpos, UINT16 Ypos, UINT16 Length, UINT8 Thickness);
 UINT16   LCD_GetStringWidth            (STRING str);
+void     LCD_DrawSmallTriangle         (UINT16 xPos, UINT16 yPos, UINT8 dir, UINT16 size, UINT32 color);
 
 
 #endif

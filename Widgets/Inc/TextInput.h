@@ -1,11 +1,11 @@
 //=============================================================================
 //
 // PROJECT     :  STM32F746-Discovery
-// HEADER      :  Utils.h
+// HEADER      :  TextInputWidget.h
 //
 //=============================================================================
-#ifndef _UTILS_H
-#define _UTILS_H
+#ifndef _TEXT_INPUT_WIDGET_H_
+#define _TEXT_INPUT_WIDGET_H_
 
 //=============================================================================
 //--- DECLARATIONS
@@ -15,14 +15,25 @@
 // Included files
 //-----------------------------------------------------------------------------
 #include "TypeDefs.h"
+#include "Widgets.h"
 
 //-----------------------------------------------------------------------------
 // Constants : defines and enumerations
 //-----------------------------------------------------------------------------
+#define NB_CHAR_MAX_TEXT_INPUT                32
 
 //-----------------------------------------------------------------------------
 // Structures and types
 //-----------------------------------------------------------------------------
+typedef struct
+{
+   UINT32   color;
+   UINT32   backColor;
+   UINT32   txtColor;
+   UINT16   width;
+   BOOL     used;
+   CHAR8    str[NB_CHAR_MAX_TEXT_INPUT];
+} s_WIDGET_TEXT_INPUT;
 
 //-----------------------------------------------------------------------------
 // External variables and functions
@@ -31,7 +42,8 @@
 //---------- Variables ----------
 
 //---------- Functions ----------
-UINT32   UTILS_CalcHash          (STRING s);
-void     UTILS_FormatWidgetValue (CHAR8* s, UINT8 len, UINT32 value);
+BOOL WIDGET_TextInputGetDefaultFuncs (s_WIDGET *pWdgt);
 
+#warning : debug
+void UPDATE_TEXT_INPUT_WIDGET (UINT8 i);
 #endif

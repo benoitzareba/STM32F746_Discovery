@@ -1,11 +1,11 @@
 //=============================================================================
 //
 // PROJECT     :  STM32F746-Discovery
-// HEADER      :  Utils.h
+// HEADER      :  ButtonWidget.h
 //
 //=============================================================================
-#ifndef _UTILS_H
-#define _UTILS_H
+#ifndef _BUTTON_WIDGET_H_
+#define _BUTTON_WIDGET_H_
 
 //=============================================================================
 //--- DECLARATIONS
@@ -15,14 +15,27 @@
 // Included files
 //-----------------------------------------------------------------------------
 #include "TypeDefs.h"
+#include "Widgets.h"
 
 //-----------------------------------------------------------------------------
 // Constants : defines and enumerations
 //-----------------------------------------------------------------------------
+#define NB_CHAR_MAX_BUTTON                16
 
 //-----------------------------------------------------------------------------
 // Structures and types
 //-----------------------------------------------------------------------------
+typedef struct
+{
+   UINT32   color;
+   UINT32   outlineColor;
+   UINT16   width;
+   UINT16   height;
+   BOOL     used;
+   BOOL     pressed;
+   UINT32   txtColor;
+   CHAR8    str[NB_CHAR_MAX_BUTTON];
+} s_WIDGET_BUTTON;
 
 //-----------------------------------------------------------------------------
 // External variables and functions
@@ -31,7 +44,8 @@
 //---------- Variables ----------
 
 //---------- Functions ----------
-UINT32   UTILS_CalcHash          (STRING s);
-void     UTILS_FormatWidgetValue (CHAR8* s, UINT8 len, UINT32 value);
+BOOL WIDGET_ButtonGetDefaultFuncs (s_WIDGET *pWdgt);
 
+#warning : debug
+void UPDATE_BUTTON_WIDGET (UINT8 i);
 #endif

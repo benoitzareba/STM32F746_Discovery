@@ -472,7 +472,7 @@ void TOUCH_TaskRun (void *argument)
          //--- S'il y a un mouvement
          if (tsState.touchDetected != touchStateOld)
          {
-            touchStateOld = tsState.touchDetected;
+             touchStateOld = tsState.touchDetected;
 
             if (tsState.touchDetected == 1)
             {

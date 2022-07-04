@@ -24,6 +24,9 @@
 #include "CheckBox.h"
 #include "NumberInput.h"
 #include "CircleProgress.h"
+#include "ProgressBar.h"
+#include "ButtonWidget.h"
+#include "TextInput.h"
 #include <stdio.h>
 
 //-----------------------------------------------------------------------------
@@ -161,6 +164,29 @@ static s_WIDGET *_numberInputWidget;
 static s_WIDGET *_circleProgressWidget;
 static s_WIDGET *_circleProgressWidget2;
 static s_WIDGET *_circleProgressWidget3;
+static s_WIDGET *_circleProgressWidget4;
+
+//--- Screen 3
+static s_WIDGET *_progressBarWidget;
+static s_WIDGET *_progressBarWidget2;
+static s_WIDGET *_progressBarWidget3;
+static s_WIDGET *_progressBarWidget4;
+static s_WIDGET *_progressBarWidget5;
+
+//--- Screen 4
+static s_WIDGET *_ButtonWidget;
+static s_WIDGET *_ButtonWidget2;
+static s_WIDGET *_ButtonWidget3;
+static s_WIDGET *_ButtonWidget4;
+static s_WIDGET *_ButtonWidget5;
+static s_WIDGET *_ButtonWidget6;
+static s_WIDGET *_ButtonWidget7;
+static s_WIDGET *_ButtonWidget8;
+static s_WIDGET *_ButtonWidget9;
+static s_WIDGET *_ButtonWidget0;
+static s_WIDGET *_ButtonWidgetClear;
+static s_WIDGET *_ButtonWidgetEnter;
+static s_WIDGET *_TextInputWidget;
 
 //---------- Functions ----------
 
@@ -197,8 +223,14 @@ BOOL SCREEN_DispScr1 (void *p)
       {
          DISP_ShowBodyZone();
 
-         //--- Allocations
+         if (s->initWidget == TRUE)
          {
+            s->initWidget = FALSE;
+
+            //------
+            //--- Allocations
+            //------
+
             //--- Slide widget
             _slideWidget = WIDGET_Alloc(WIDGET_SLIDE_TYPE, WIDGET_FULL_CONTROL_MODE);
             _slideWidget2 = WIDGET_Alloc(WIDGET_SLIDE_TYPE, WIDGET_FULL_CONTROL_MODE);
@@ -220,10 +252,11 @@ BOOL SCREEN_DispScr1 (void *p)
             _checkBoxWidget2 = WIDGET_Alloc(WIDGET_CHECKBOX_TYPE, WIDGET_FULL_CONTROL_MODE);
             _checkBoxWidget3 = WIDGET_Alloc(WIDGET_CHECKBOX_TYPE, WIDGET_FULL_CONTROL_MODE);
             _checkBoxWidget4 = WIDGET_Alloc(WIDGET_CHECKBOX_TYPE, WIDGET_FULL_CONTROL_MODE);
-         }
 
-         //--- Positions
-         {
+            //------
+            //--- Positions
+            //------
+
             //--- Slide widget
             _slideWidget->posX               = 220;
             _slideWidget->posY               = 70;
@@ -269,10 +302,11 @@ BOOL SCREEN_DispScr1 (void *p)
 
             _checkBoxWidget4->posX           = 420;
             _checkBoxWidget4->posY           = 190;
-         }
 
-         //--- Parametrages
-         {
+            //------
+            //--- Parametrages
+            //------
+
             //--- Slide widget
             slideParam.color                    = LCD_COLOR_LIGHTCYAN;
             slideParam.baseColor                = LCD_COLOR_BACKGROUND_PAGE;
@@ -339,30 +373,31 @@ BOOL SCREEN_DispScr1 (void *p)
             checkBoxParam4.currentValue         = FALSE;
          }
 
-         //--- Init
-         {
-            //--- Slide widget
-            WIDGET_Init(_slideWidget, &slideParam);
-            WIDGET_Init(_slideWidget2, &slideParam2);
+         //------
+         //--- Initialisation
+         //------
 
-            //--- Toggle switch widget
-            WIDGET_Init(_toggleSwitchWidget, &toggleSwitchParam);
-            WIDGET_Init(_toggleSwitchWidget2, &toggleSwitchParam2);
-            WIDGET_Init(_toggleSwitchWidget3, &toggleSwitchParam3);
-            WIDGET_Init(_toggleSwitchWidget4, &toggleSwitchParam4);
+         //--- Slide widget
+         WIDGET_Init(_slideWidget, &slideParam);
+         WIDGET_Init(_slideWidget2, &slideParam2);
 
-            //--- Radio button widget
-            WIDGET_Init(_radioButtonWidget, &radioButtonParam);
-            WIDGET_Init(_radioButtonWidget2, &radioButtonParam2);
-            WIDGET_Init(_radioButtonWidget3, &radioButtonParam3);
-            WIDGET_Init(_radioButtonWidget4, &radioButtonParam4);
+         //--- Toggle switch widget
+         WIDGET_Init(_toggleSwitchWidget, &toggleSwitchParam);
+         WIDGET_Init(_toggleSwitchWidget2, &toggleSwitchParam2);
+         WIDGET_Init(_toggleSwitchWidget3, &toggleSwitchParam3);
+         WIDGET_Init(_toggleSwitchWidget4, &toggleSwitchParam4);
 
-            //--- Checkbox widget
-            WIDGET_Init(_checkBoxWidget, &checkBoxParam);
-            WIDGET_Init(_checkBoxWidget2, &checkBoxParam2);
-            WIDGET_Init(_checkBoxWidget3, &checkBoxParam3);
-            WIDGET_Init(_checkBoxWidget4, &checkBoxParam4);
-         }
+         //--- Radio button widget
+         WIDGET_Init(_radioButtonWidget, &radioButtonParam);
+         WIDGET_Init(_radioButtonWidget2, &radioButtonParam2);
+         WIDGET_Init(_radioButtonWidget3, &radioButtonParam3);
+         WIDGET_Init(_radioButtonWidget4, &radioButtonParam4);
+
+         //--- Checkbox widget
+         WIDGET_Init(_checkBoxWidget, &checkBoxParam);
+         WIDGET_Init(_checkBoxWidget2, &checkBoxParam2);
+         WIDGET_Init(_checkBoxWidget3, &checkBoxParam3);
+         WIDGET_Init(_checkBoxWidget4, &checkBoxParam4);
 
          s->state = DURING_SCREEN_STATE;
          break;
@@ -444,6 +479,9 @@ BOOL SCREEN_DispScr2 (void *p)
    s_WIDGET_CIRCLE_PROGRESS circleProgressParam;
    s_WIDGET_CIRCLE_PROGRESS circleProgressParam2;
    s_WIDGET_CIRCLE_PROGRESS circleProgressParam3;
+   s_WIDGET_CIRCLE_PROGRESS circleProgressParam4;
+
+   static TickType_t _tick = 0;
 
    switch (s->state)
    {
@@ -452,67 +490,83 @@ BOOL SCREEN_DispScr2 (void *p)
          //--- Corps
          DISP_ShowBodyZone();
 
-         //--- Allocation
-         _numberInputWidget      = WIDGET_Alloc(WIDGET_NUMBER_INPUT_TYPE, WIDGET_FULL_CONTROL_MODE);
-         _circleProgressWidget   = WIDGET_Alloc(WIDGET_CIRCLE_PROGRESS_TYPE, WIDGET_DISPLAY_ONLY_MODE);
-         _circleProgressWidget2  = WIDGET_Alloc(WIDGET_CIRCLE_PROGRESS_TYPE, WIDGET_DISPLAY_ONLY_MODE);
-         _circleProgressWidget3  = WIDGET_Alloc(WIDGET_CIRCLE_PROGRESS_TYPE, WIDGET_DISPLAY_ONLY_MODE);
+         if (s->initWidget == TRUE)
+         {
+            s->initWidget = FALSE;
 
-         //--- Position
-         _numberInputWidget->posX               = 300;
-         _numberInputWidget->posY               = 60;
+            //------
+            //--- Allocation
+            //------
+            _numberInputWidget                     = WIDGET_Alloc(WIDGET_NUMBER_INPUT_TYPE, WIDGET_FULL_CONTROL_MODE);
+            _circleProgressWidget                  = WIDGET_Alloc(WIDGET_CIRCLE_PROGRESS_TYPE, WIDGET_DISPLAY_ONLY_MODE);
+            _circleProgressWidget2                 = WIDGET_Alloc(WIDGET_CIRCLE_PROGRESS_TYPE, WIDGET_DISPLAY_ONLY_MODE);
+            _circleProgressWidget3                 = WIDGET_Alloc(WIDGET_CIRCLE_PROGRESS_TYPE, WIDGET_DISPLAY_ONLY_MODE);
+            _circleProgressWidget4                 = WIDGET_Alloc(WIDGET_CIRCLE_PROGRESS_TYPE, WIDGET_DISPLAY_ONLY_MODE);
 
-         _circleProgressWidget->posX            = 270;
-         _circleProgressWidget->posY            = 160;
+            //------
+            //--- Position
+            //------
+            _numberInputWidget->posX               = 200;
+            _numberInputWidget->posY               = 60;
 
-         _circleProgressWidget2->posX           = 365;
-         _circleProgressWidget2->posY           = 160;
+            _circleProgressWidget->posX            = 45;
+            _circleProgressWidget->posY            = 162 + 22;
 
-         _circleProgressWidget3->posX           = 430;
-         _circleProgressWidget3->posY           = 160;
+            _circleProgressWidget2->posX           = 142;
+            _circleProgressWidget2->posY           = 162 + 8;
 
-         //--- Configuration
-         numberInputParam.width                 = 100;
-         numberInputParam.height                = 40;
-         numberInputParam.backgroundColor       = LCD_COLOR_BACKGROUND_ITEM;
-         numberInputParam.color                 = LCD_COLOR_LIGHTGREEN;
-         numberInputParam.currentValue          = 0;
+            _circleProgressWidget3->posX           = 258;
+            _circleProgressWidget3->posY           = 162;
 
-         circleProgressParam.color              = LCD_COLOR_LIGHTRED;
-         circleProgressParam.backgroundColor    = LCD_COLOR_DARKGRAY;
-         circleProgressParam.maskColor          = LCD_COLOR_BACKGROUND_ITEM;
-         circleProgressParam.currentValue       = 0.;
-         circleProgressParam.radius             = 40;
+            _circleProgressWidget4->posX           = 395;
+            _circleProgressWidget4->posY           = 162 - 12;
 
-         circleProgressParam2.color             = LCD_COLOR_LIGHTYELLOW;
-         circleProgressParam2.backgroundColor   = LCD_COLOR_DARKGRAY;
-         circleProgressParam2.maskColor         = LCD_COLOR_BACKGROUND_ITEM;
-         circleProgressParam2.currentValue      = 100.;
-         circleProgressParam2.radius            = 30;
+            //------
+            //--- Configuration
+            //------
+            numberInputParam.width                 = 130;
+            numberInputParam.height                = 40;
+            numberInputParam.backgroundColor       = LCD_COLOR_BACKGROUND_ITEM;
+            numberInputParam.color                 = LCD_COLOR_LIGHTGREEN;
+            numberInputParam.currentValue          = 0;
 
-         circleProgressParam3.color             = LCD_COLOR_LIGHTGREEN;
-         circleProgressParam3.backgroundColor   = LCD_COLOR_DARKGRAY;
-         circleProgressParam3.maskColor         = LCD_COLOR_BACKGROUND_ITEM;
-         circleProgressParam3.currentValue      = 0.;
-         circleProgressParam3.radius            = 20;
+            circleProgressParam.color              = LCD_COLOR_LIGHTYELLOW;
+            circleProgressParam.backgroundColor    = LCD_COLOR_DARKGRAY;
+            circleProgressParam.maskColor          = LCD_COLOR_BACKGROUND_ITEM;
+            circleProgressParam.currentValue       = 25;
+            circleProgressParam.radius             = 28;
+            circleProgressParam.dispVal            = TRUE;
 
+            circleProgressParam2.color             = LCD_COLOR_LIGHTCYAN;
+            circleProgressParam2.backgroundColor   = LCD_COLOR_DARKGRAY;
+            circleProgressParam2.maskColor         = LCD_COLOR_BACKGROUND_ITEM;
+            circleProgressParam2.currentValue      = 50;
+            circleProgressParam2.radius            = 42;
+            circleProgressParam2.dispVal           = TRUE;
+
+            circleProgressParam3.color             = LCD_COLOR_LIGHTRED;
+            circleProgressParam3.backgroundColor   = LCD_COLOR_DARKGRAY;
+            circleProgressParam3.maskColor         = LCD_COLOR_BACKGROUND_ITEM;
+            circleProgressParam3.currentValue      = 75;
+            circleProgressParam3.radius            = 50;
+            circleProgressParam3.dispVal           = TRUE;
+
+            circleProgressParam4.color             = LCD_COLOR_LIGHTGREEN;
+            circleProgressParam4.backgroundColor   = LCD_COLOR_DARKGRAY;
+            circleProgressParam4.maskColor         = LCD_COLOR_BACKGROUND_ITEM;
+            circleProgressParam4.currentValue      = 100;
+            circleProgressParam4.radius            = 62;
+            circleProgressParam4.dispVal           = TRUE;
+         }
+
+         //------
          //--- Initialisation
+         //------
          WIDGET_Init(_numberInputWidget, &numberInputParam);
          WIDGET_Init(_circleProgressWidget, &circleProgressParam);
          WIDGET_Init(_circleProgressWidget2, &circleProgressParam2);
          WIDGET_Init(_circleProgressWidget3, &circleProgressParam3);
-
-         //--- Affichage number input
-         LCD_SetFont(&LCD_FONT_16);
-         LCD_SetTextColor(LCD_COLOR_LIGHTGRAY);
-         LCD_SetBackColor(LCD_COLOR_BACKGROUND_ITEM);
-         LCD_DisplayStringAt(20, 75, (STRING)"Number input\0", LEFT_MODE);
-
-         //--- Affichage circle progress
-         LCD_SetFont(&LCD_FONT_16);
-         LCD_SetTextColor(LCD_COLOR_LIGHTGRAY);
-         LCD_SetBackColor(LCD_COLOR_BACKGROUND_ITEM);
-         LCD_DisplayStringAt(20, 150, (STRING)"Circle progress\0", LEFT_MODE);
+         WIDGET_Init(_circleProgressWidget4, &circleProgressParam4);
 
          s->state = DURING_SCREEN_STATE;
          break;
@@ -520,10 +574,31 @@ BOOL SCREEN_DispScr2 (void *p)
 
       case DURING_SCREEN_STATE:
       {
+         //--- Affichage number input
+         LCD_SetFont(&LCD_FONT_16);
+         LCD_SetTextColor(LCD_COLOR_LIGHTGRAY);
+         LCD_SetBackColor(LCD_COLOR_BACKGROUND_ITEM);
+         LCD_DisplayStringAt(20, 60, (STRING)"Number input\0", LEFT_MODE);
          WIDGET_Display(_numberInputWidget);
+
+         //--- Affichage circle progress
+         LCD_SetFont(&LCD_FONT_16);
+         LCD_SetTextColor(LCD_COLOR_LIGHTGRAY);
+         LCD_SetBackColor(LCD_COLOR_BACKGROUND_ITEM);
+         LCD_DisplayStringAt(20, 100, (STRING)"Circle progress\0", LEFT_MODE);
          WIDGET_Display(_circleProgressWidget);
          WIDGET_Display(_circleProgressWidget2);
          WIDGET_Display(_circleProgressWidget3);
+         WIDGET_Display(_circleProgressWidget4);
+
+         if (xTaskGetTickCount() - _tick >= 40)
+         {
+            UPDATE_CIRCLE_PROGRESS(0);
+            UPDATE_NUMBER_INPUT(0);
+
+            UPDATE_WIDGET(0);
+            _tick = xTaskGetTickCount();
+         }
          break;
       }
 
@@ -559,7 +634,14 @@ BOOL SCREEN_UpdateScr2  (void *p, void *e)
 //-----------------------------------------------------------------------------
 BOOL SCREEN_DispScr3 (void *p)
 {
+   s_WIDGET_PROGRESS_BAR progressBarParam;
+   s_WIDGET_PROGRESS_BAR progressBarParam2;
+   s_WIDGET_PROGRESS_BAR progressBarParam3;
+   s_WIDGET_PROGRESS_BAR progressBarParam4;
+   s_WIDGET_PROGRESS_BAR progressBarParam5;
    s_SCREEN *s = (s_SCREEN *)p;
+
+   static UINT8   _idx  = 0;
 
    switch (s->state)
    {
@@ -568,12 +650,115 @@ BOOL SCREEN_DispScr3 (void *p)
          //--- Corps
          DISP_ShowBodyZone();
 
+         if (s->initWidget == TRUE)
+         {
+            s->initWidget = FALSE;
+
+            //------
+            //--- Allocation
+            //------
+            _progressBarWidget = WIDGET_Alloc(WIDGET_PROGRESS_BAR_TYPE, WIDGET_DISPLAY_ONLY_MODE);
+            _progressBarWidget2 = WIDGET_Alloc(WIDGET_PROGRESS_BAR_TYPE, WIDGET_DISPLAY_ONLY_MODE);
+            _progressBarWidget3 = WIDGET_Alloc(WIDGET_PROGRESS_BAR_TYPE, WIDGET_DISPLAY_ONLY_MODE);
+            _progressBarWidget4 = WIDGET_Alloc(WIDGET_PROGRESS_BAR_TYPE, WIDGET_DISPLAY_ONLY_MODE);
+            _progressBarWidget5 = WIDGET_Alloc(WIDGET_PROGRESS_BAR_TYPE, WIDGET_DISPLAY_ONLY_MODE);
+
+            //------
+            //--- Positions
+            //------
+            _progressBarWidget->posX               = 190;
+            _progressBarWidget->posY               = 104;
+
+            _progressBarWidget2->posX              = 260;
+            _progressBarWidget2->posY              = 123;
+
+            _progressBarWidget3->posX              = 330;
+            _progressBarWidget3->posY              = 55;
+
+            _progressBarWidget4->posX              = 390;
+            _progressBarWidget4->posY              = 79;
+
+            _progressBarWidget5->posX              = 440;
+            _progressBarWidget5->posY              = 108;
+
+            //------
+            //--- Configuration
+            //------
+            progressBarParam.height                = 90;
+            progressBarParam.width                 = 22;
+            progressBarParam.backgroundColor       = LCD_COLOR_BACKGROUND_ITEM;
+            progressBarParam.color                 = LCD_COLOR_WHITE;
+            progressBarParam.baseColor             = LCD_COLOR_BACKGROUND_PAGE;
+            progressBarParam.currentValue          = 0.2;
+            progressBarParam.outline               = TRUE;
+            progressBarParam.cursorValue           = TRUE;
+
+            progressBarParam2.height               = 75;
+            progressBarParam2.width                = 18;
+            progressBarParam2.backgroundColor      = LCD_COLOR_BACKGROUND_ITEM;
+            progressBarParam2.color                = LCD_COLOR_LIGHTCYAN;
+            progressBarParam2.baseColor            = LCD_COLOR_BACKGROUND_PAGE;
+            progressBarParam2.currentValue         = 1.0;
+            progressBarParam2.outline              = TRUE;
+            progressBarParam2.cursorValue          = TRUE;
+
+            progressBarParam3.height               = 145;
+            progressBarParam3.width                = 16;
+            progressBarParam3.backgroundColor      = LCD_COLOR_BACKGROUND_ITEM;
+            progressBarParam3.color                = LCD_COLOR_LIGHTYELLOW;
+            progressBarParam3.baseColor            = LCD_COLOR_BACKGROUND_PAGE;
+            progressBarParam3.currentValue         = 0.0;
+            progressBarParam3.outline              = TRUE;
+            progressBarParam3.cursorValue          = TRUE;
+
+            progressBarParam4.height               = 125;
+            progressBarParam4.width                = 12;
+            progressBarParam4.backgroundColor      = LCD_COLOR_BACKGROUND_ITEM;
+            progressBarParam4.color                = LCD_COLOR_LIGHTRED;
+            progressBarParam4.baseColor            = LCD_COLOR_BACKGROUND_PAGE;
+            progressBarParam4.currentValue         = 0.5;
+            progressBarParam4.outline              = TRUE;
+            progressBarParam4.cursorValue          = TRUE;
+
+            progressBarParam5.height               = 100;
+            progressBarParam5.width                = 8;
+            progressBarParam5.backgroundColor      = LCD_COLOR_BACKGROUND_ITEM;
+            progressBarParam5.color                = LCD_COLOR_LIGHTGREEN;
+            progressBarParam5.baseColor            = LCD_COLOR_BACKGROUND_PAGE;
+            progressBarParam5.currentValue         = 0.8;
+            progressBarParam5.outline              = TRUE;
+            progressBarParam5.cursorValue          = TRUE;
+         }
+
+         //--- Initialisation
+         WIDGET_Init(_progressBarWidget, &progressBarParam);
+         WIDGET_Init(_progressBarWidget2, &progressBarParam2);
+         WIDGET_Init(_progressBarWidget3, &progressBarParam3);
+         WIDGET_Init(_progressBarWidget4, &progressBarParam4);
+         WIDGET_Init(_progressBarWidget5, &progressBarParam5);
+
          s->state = DURING_SCREEN_STATE;
          break;
       }
 
       case DURING_SCREEN_STATE:
       {
+         //--- Affichage number input
+         LCD_SetFont(&LCD_FONT_16);
+         LCD_SetTextColor(LCD_COLOR_LIGHTGRAY);
+         LCD_SetBackColor(LCD_COLOR_BACKGROUND_ITEM);
+         LCD_DisplayStringAt(20, 75, (STRING)"Vertical progress bar\0", LEFT_MODE);
+
+         WIDGET_Display(_progressBarWidget);
+         WIDGET_Display(_progressBarWidget2);
+         WIDGET_Display(_progressBarWidget3);
+         WIDGET_Display(_progressBarWidget4);
+         WIDGET_Display(_progressBarWidget5);
+
+         UPDATE_PROGRESS_BAR(_idx);
+         UPDATE_WIDGET(_idx);
+         _idx++;
+         _idx %= 5;
          break;
       }
 
@@ -610,6 +795,10 @@ BOOL SCREEN_UpdateScr3 (void *p, void *e)
 BOOL SCREEN_DispScr4 (void *p)
 {
    s_SCREEN *s = (s_SCREEN *)p;
+   s_WIDGET_BUTTON buttonParam;
+   s_WIDGET_BUTTON buttonParamClear;
+   s_WIDGET_BUTTON buttonParamEnter;
+   s_WIDGET_TEXT_INPUT textInputParam;
 
    switch (s->state)
    {
@@ -618,12 +807,126 @@ BOOL SCREEN_DispScr4 (void *p)
          //--- Corps
          DISP_ShowBodyZone();
 
+         if (s->initWidget == TRUE)
+         {
+            s->initWidget = FALSE;
+
+            //------
+            //--- Allocation
+            //------
+            _ButtonWidget        = WIDGET_Alloc(WIDGET_BUTTON_TYPE, WIDGET_FULL_CONTROL_MODE);
+            _ButtonWidget2       = WIDGET_Alloc(WIDGET_BUTTON_TYPE, WIDGET_FULL_CONTROL_MODE);
+            _ButtonWidget3       = WIDGET_Alloc(WIDGET_BUTTON_TYPE, WIDGET_FULL_CONTROL_MODE);
+            _ButtonWidget4       = WIDGET_Alloc(WIDGET_BUTTON_TYPE, WIDGET_FULL_CONTROL_MODE);
+            _ButtonWidget5       = WIDGET_Alloc(WIDGET_BUTTON_TYPE, WIDGET_FULL_CONTROL_MODE);
+            _ButtonWidget6       = WIDGET_Alloc(WIDGET_BUTTON_TYPE, WIDGET_FULL_CONTROL_MODE);
+            _ButtonWidget7       = WIDGET_Alloc(WIDGET_BUTTON_TYPE, WIDGET_FULL_CONTROL_MODE);
+            _ButtonWidget8       = WIDGET_Alloc(WIDGET_BUTTON_TYPE, WIDGET_FULL_CONTROL_MODE);
+            _ButtonWidget9       = WIDGET_Alloc(WIDGET_BUTTON_TYPE, WIDGET_FULL_CONTROL_MODE);
+            _ButtonWidget0       = WIDGET_Alloc(WIDGET_BUTTON_TYPE, WIDGET_FULL_CONTROL_MODE);
+            _ButtonWidgetClear   = WIDGET_Alloc(WIDGET_BUTTON_TYPE, WIDGET_FULL_CONTROL_MODE);
+            _ButtonWidgetEnter   = WIDGET_Alloc(WIDGET_BUTTON_TYPE, WIDGET_FULL_CONTROL_MODE);
+            _TextInputWidget     = WIDGET_Alloc(WIDGET_TEXT_INPUT_TYPE, WIDGET_FULL_CONTROL_MODE);
+
+            //------
+            //--- Positions
+            //------
+            _ButtonWidget->posX  = _ButtonWidget4->posX = _ButtonWidget7->posX   = 195 + 40;
+            _ButtonWidget2->posX = _ButtonWidget5->posX = _ButtonWidget8->posX   = 280 + 30;
+            _ButtonWidget3->posX = _ButtonWidget6->posX = _ButtonWidget9->posX   = 365 + 20;
+
+            _ButtonWidget->posY  = _ButtonWidget2->posY = _ButtonWidget3->posY   = 54;
+            _ButtonWidget4->posY = _ButtonWidget5->posY = _ButtonWidget6->posY   = 96;
+            _ButtonWidget7->posY = _ButtonWidget8->posY = _ButtonWidget9->posY   = 138;
+
+            _ButtonWidget0->posX       = 280 + 30;
+            _ButtonWidget0->posY       = 180;
+
+            _ButtonWidgetClear->posX   = 195 + 40;
+            _ButtonWidgetClear->posY   = 180;
+
+            _ButtonWidgetEnter->posX   = 365 + 20;
+            _ButtonWidgetEnter->posY   = 180;
+
+            _TextInputWidget->posX     = 20;
+            _TextInputWidget->posY     = 54;
+
+            //------
+            //--- Configuration
+            //------
+            buttonParam.color                = LCD_COLOR_BACKGROUND_PAGE;
+            buttonParam.outlineColor         = LCD_COLOR_LIGHTCYAN;
+            buttonParam.height               = 37;
+            buttonParam.width                = 70;
+            buttonParam.txtColor             = LCD_COLOR_LIGHTCYAN;
+            STRING_COPY(buttonParam.str, "0\0");
+
+            buttonParamClear.color           = LCD_COLOR_LIGHTRED;
+            buttonParamClear.outlineColor    = LCD_COLOR_LIGHTRED;
+            buttonParamClear.height          = 37;
+            buttonParamClear.width           = 70;
+            buttonParamClear.txtColor        = LCD_COLOR_WHITE;
+            STRING_COPY(buttonParamClear.str, "CLEAR\0");
+
+            buttonParamEnter.color           = LCD_COLOR_LIGHTGREEN;
+            buttonParamEnter.outlineColor    = LCD_COLOR_LIGHTGREEN;
+            buttonParamEnter.height          = 37;
+            buttonParamEnter.width           = 70;
+            buttonParamEnter.txtColor        = LCD_COLOR_WHITE;
+            STRING_COPY(buttonParamEnter.str, "ENTER\0");
+
+            textInputParam.color             = LCD_COLOR_LIGHTCYAN;
+            textInputParam.backColor         = LCD_COLOR_LIGHTGRAY;
+            textInputParam.txtColor          = LCD_COLOR_BLACK;
+            textInputParam.width             = 180;
+            STRING_COPY(textInputParam.str, "06632169\0");
+         }
+
+         WIDGET_Init(_ButtonWidget0, &buttonParam);
+         buttonParam.str[0]++;
+         WIDGET_Init(_ButtonWidget, &buttonParam);
+         buttonParam.str[0]++;
+         WIDGET_Init(_ButtonWidget2, &buttonParam);
+         buttonParam.str[0]++;
+         WIDGET_Init(_ButtonWidget3, &buttonParam);
+         buttonParam.str[0]++;
+         WIDGET_Init(_ButtonWidget4, &buttonParam);
+         buttonParam.str[0]++;
+         WIDGET_Init(_ButtonWidget5, &buttonParam);
+         buttonParam.str[0]++;
+         WIDGET_Init(_ButtonWidget6, &buttonParam);
+         buttonParam.str[0]++;
+         WIDGET_Init(_ButtonWidget7, &buttonParam);
+         buttonParam.str[0]++;
+         WIDGET_Init(_ButtonWidget8, &buttonParam);
+         buttonParam.str[0]++;
+
+         WIDGET_Init(_ButtonWidget9, &buttonParam);
+         WIDGET_Init(_ButtonWidgetClear, &buttonParamClear);
+         WIDGET_Init(_ButtonWidgetEnter, &buttonParamEnter);
+         WIDGET_Init(_TextInputWidget, &textInputParam);
+
          s->state = DURING_SCREEN_STATE;
          break;
       }
 
       case DURING_SCREEN_STATE:
       {
+         WIDGET_Display(_ButtonWidget);
+         WIDGET_Display(_ButtonWidget2);
+         WIDGET_Display(_ButtonWidget3);
+         WIDGET_Display(_ButtonWidget4);
+         WIDGET_Display(_ButtonWidget5);
+         WIDGET_Display(_ButtonWidget6);
+         WIDGET_Display(_ButtonWidget7);
+         WIDGET_Display(_ButtonWidget8);
+         WIDGET_Display(_ButtonWidget9);
+         WIDGET_Display(_ButtonWidget0);
+         WIDGET_Display(_ButtonWidgetClear);
+         WIDGET_Display(_ButtonWidgetEnter);
+         _TextInputWidget->isUpToDate = FALSE;
+         WIDGET_Display(_TextInputWidget);
+
          break;
       }
 
@@ -863,6 +1166,7 @@ BOOL SCREEN_LoadAndUpdate (CHAR8* menuName, s_SCREEN* s)
          s->header = &_header[s->idScr];
          s->footer = &_footer[s->idScr];
          s->slide = &_slide[s->idScr - 1];
+         s->initWidget = TRUE;
 
          for (i = 0; i < NB_BUTTON_MAX; i++)
             s->footer->button[i].selected = FALSE;
@@ -907,8 +1211,11 @@ BOOL SCREEN_Display (s_SCREEN* s)
    if (_updateFooter == TRUE)
       DISP_ShowFooter(s->footer);
 
-   //--- Fonction d'affichage
-   dispDone = s->disp(s);
+   if (s->slide->state == FALSE)
+   {
+      //--- Fonction d'affichage
+      dispDone = s->disp(s);
+   }
 
    if (_updateSlideMenu == TRUE)
       DISP_ShowSlideMenu(s->slide);
@@ -948,7 +1255,7 @@ void SCREEN_Initialize (void)
    WIDGET_GlobalInit();
 
    //--- Load first screen
-   SCREEN_LoadNext(&_curScr, (STRING)"DispScreen2");
+   SCREEN_LoadNext(&_curScr, (STRING)"DispScreen4");
 }
 
 //-----------------------------------------------------------------------------
@@ -988,28 +1295,17 @@ void SCREEN_TaskRun (void *argument)
 }
 
 #warning: debug
-void UPDATE_WIDGET (void)
+void UPDATE_WIDGET (UINT8 idx)
 {
-   _slideWidget->isUpToDate = FALSE;
-   _slideWidget2->isUpToDate = FALSE;
-
-   _toggleSwitchWidget->isUpToDate = FALSE;
-   _toggleSwitchWidget2->isUpToDate = FALSE;
-   _toggleSwitchWidget3->isUpToDate = FALSE;
-   _toggleSwitchWidget4->isUpToDate = FALSE;
-
-   _radioButtonWidget->isUpToDate = FALSE;
-   _radioButtonWidget2->isUpToDate = FALSE;
-   _radioButtonWidget3->isUpToDate = FALSE;
-   _radioButtonWidget4->isUpToDate = FALSE;
-
-   _checkBoxWidget->isUpToDate = FALSE;
-   _checkBoxWidget2->isUpToDate = FALSE;
-   _checkBoxWidget3->isUpToDate = FALSE;
-   _checkBoxWidget4->isUpToDate = FALSE;
-
    _numberInputWidget->isUpToDate = FALSE;
    _circleProgressWidget->isUpToDate = FALSE;
    _circleProgressWidget2->isUpToDate = FALSE;
    _circleProgressWidget3->isUpToDate = FALSE;
+   _circleProgressWidget4->isUpToDate = FALSE;
+
+   _progressBarWidget->isUpToDate   = FALSE;
+   _progressBarWidget2->isUpToDate  = FALSE;
+   _progressBarWidget3->isUpToDate  = FALSE;
+   _progressBarWidget4->isUpToDate  = FALSE;
+   _progressBarWidget5->isUpToDate  = FALSE;
 }

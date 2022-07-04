@@ -107,6 +107,7 @@ typedef struct //--- s_SCREEN
    s_FOOTER*            footer;
    s_POPUP*             popup;
    s_SLIDE*             slide;
+   BOOL                 initWidget;
 } s_SCREEN;
 
 //-----------------------------------------------------------------------------
@@ -150,5 +151,5 @@ void SCREEN_Initialize        (void);
 void SCREEN_TaskRun           (void *argument);
 
 #warning: debug
-void UPDATE_WIDGET (void);
+void UPDATE_WIDGET (UINT8);
 #endif

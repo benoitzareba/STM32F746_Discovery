@@ -192,12 +192,3 @@ BOOL WIDGET_CheckBoxGetDefaultFuncs (s_WIDGET *pWdgt)
 
    return isGeted;
 }
-
-#warning : debug
-void UPDATE_CHECK_BOX (BOOL valCheckBox)
-{
-   _checkBox[0].currentValue = !valCheckBox;
-   _checkBox[1].currentValue = valCheckBox;
-   _checkBox[2].currentValue = valCheckBox;
-   _checkBox[3].currentValue = !valCheckBox;
-}

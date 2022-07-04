@@ -191,12 +191,3 @@ BOOL WIDGET_ToggleSwitchGetDefaultFuncs (s_WIDGET *pWdgt)
 
    return isGeted;
 }
-
-#warning : debug
-void UPDATE_TOGGLE_SWITCH (BOOL valToggle)
-{
-   _toggleSwitch[0].currentValue = valToggle;
-   _toggleSwitch[1].currentValue = !valToggle;
-   _toggleSwitch[2].currentValue = valToggle;
-   _toggleSwitch[3].currentValue = !valToggle;
-}

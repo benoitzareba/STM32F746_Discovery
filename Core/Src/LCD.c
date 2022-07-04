@@ -665,6 +665,19 @@ void LCD_Reload (UINT32 ReloadType)
 //-----------------------------------------------------------------------------
 void LCD_SetTextColor (UINT32 Color)
 {
+   /*
+   u_UINT32 dummy32;
+   u_UINT32 dummyConv;
+
+   dummy32.val = Color;
+
+   dummy32.tab[0] = (dummy32.tab[0] & 0xF8) >> 3;
+   dummy32.tab[1] = (dummy32.tab[1] & 0xFC) >> 2;
+   dummy32.tab[2] = (dummy32.tab[2] & 0xF8) >> 3;
+
+   dummyConv.val = dummy32.tab[0] | (dummy32.tab[1] << 5) | (dummy32.tab[2] << 11);
+   */
+
    DrawProp[ActiveLayer].TextColor = Color;
 }
 
@@ -1160,15 +1173,13 @@ void LCD_DrawFilledCircle (UINT16 x0, UINT16 y0, UINT16 radius)
 //
 // DESCRIPTION : Draws a progress circle
 //-----------------------------------------------------------------------------
-void LCD_DrawProgressCircle (UINT16 posX, UINT16 posY, UINT8 width, FLOAT32 fromProgress, FLOAT32 toProgress, UINT16 radius, UINT32 color)
+void LCD_DrawProgressCircle (UINT16 posX, UINT16 posY, FLOAT32 width, UINT8 fromProgress, UINT8 toProgress, UINT8 radius, UINT32 color)
 {
    FLOAT32 step = 2*M_PI/100.0;
    FLOAT32 angle;
    FLOAT32 from;
    FLOAT32 to;
    FLOAT32 x0, y0, x1, y1;
-
-   UINT32 cpt = 0;
 
    if (fromProgress <= toProgress)
    {
@@ -1183,22 +1194,15 @@ void LCD_DrawProgressCircle (UINT16 posX, UINT16 posY, UINT8 width, FLOAT32 from
 
    for (angle = from; angle < to; angle += 0.01)
    {
-       x0 = (radius * 0.8) * cos(angle);
-       y0 = (radius * 0.8) * sin(angle);
+      x0 = radius * cos(angle);
+      y0 = radius * sin(angle);
 
-       x1 = radius * cos(angle);
-       y1 = radius * sin(angle);
+      x1 = (FLOAT32)(((FLOAT32)radius * width) * cos(angle));
+      y1 = (FLOAT32)(((FLOAT32)radius * width) * sin(angle));
 
-       LCD_SetTextColor(color);
-       LCD_DrawLine(posX + x0, posY + y0, posX + x1, posY + y1);
-
-       //LCD_DrawPixel(posX + x0, posY + y0, color);
-       cpt++;
+      LCD_SetTextColor(color);
+      LCD_DrawLine(posX + x0, posY + y0, posX + x1, posY + y1);
    }
-
-   if (cpt % 2 == 0)
-      LCD_DrawPixel(posX + x0, posY + y0, color);
-
 }
 
 //-----------------------------------------------------------------------------
@@ -1804,4 +1808,53 @@ UINT16 LCD_GetStringWidth (STRING str)
    font = LCD_GetFont();
 
    return font->Width * arraySize;
+}
+
+//-----------------------------------------------------------------------------
+// FONCTION    : LCD_DrawSmallTriangle
+//
+// DESCRIPTION : Draw small triangle
+//-----------------------------------------------------------------------------
+void LCD_DrawSmallTriangle (UINT16 xPos, UINT16 yPos, UINT8 dir, UINT16 size, UINT32 color)
+{
+   UINT16   xInc;
+   UINT16   yInc;
+   UINT16   i, j;
+   UINT16   x, y;
+
+   if ((dir == LEFT_DIR) || (dir == RIGHT_DIR))
+   {
+      xInc = dir - 1;
+      yInc = 0;
+   }
+   else
+   {
+      xInc = 0;
+      yInc = 2 - dir;
+   }
+
+   if ((size % 2) == 0)
+   {
+      for(i = 0; i < size; i++)
+      {
+         for(j = 0; j < (2 * i + 2); j++)
+         {
+            x = (xPos - xInc * i + yInc * (j - i));
+            y = (yPos + xInc * (j - i) - yInc * i);
+            LCD_DrawPixel(x, y, color);
+         }
+      }
+   }
+   else
+   {
+      for(i = 0; i < size; i++)
+      {
+         for(j = 0; j < (2 * i + 1); j++)
+         {
+            x = (xPos - xInc * i + yInc * (j - i));
+            y = (yPos + xInc * (j - i) - yInc * i);
+            LCD_DrawPixel(x, y, color);
+         }
+      }
+   }
 }

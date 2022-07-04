@@ -1,7 +1,7 @@
 //=============================================================================
 //
 // PROJECT     :  STM32F746-Discovery
-// MODULE      :  RadioButton.c
+// MODULE      :  TextInput.c
 // AUTHOR      :  Benoit ZAREBA
 //
 //=============================================================================
@@ -13,13 +13,13 @@
 //-----------------------------------------------------------------------------
 // Included files
 //-----------------------------------------------------------------------------
-#include "RadioButton.h"
+#include "TextInput.h"
 #include "DispWidgets.h"
 
 //-----------------------------------------------------------------------------
 // Constants : defines and enumerations
 //-----------------------------------------------------------------------------
-#define NB_RADIO_BUTTON_MAX      6
+#define NB_TEXT_INPUT_MAX               8
 
 //-----------------------------------------------------------------------------
 // Structures and types
@@ -38,40 +38,40 @@
 //-----------------------------------------------------------------------------
 
 //---------- Variables ----------
-static UINT8 _count = 0;
-static s_WIDGET_RADIOBUTTON _radioButton[NB_RADIO_BUTTON_MAX];
+static UINT8 _count;
+static s_WIDGET_TEXT_INPUT _textInput[NB_TEXT_INPUT_MAX];
 
 //---------- Functions ----------
-static void*   _NewRadioButton      (e_WIDGET_MODE mode);
-static BOOL    _InitRadioButton     (s_WIDGET *pWdgt, void* ptr);
-static BOOL    _DispRadioButton     (s_WIDGET *pWdgt);
-static BOOL    _UpdateRadioButton   (s_WIDGET *pWdgt, void* ptr);
-static BOOL    _DeleteRadioButton   (s_WIDGET *pWdgt);
+static void*   _NewTextInput     (e_WIDGET_MODE mode);
+static BOOL    _InitTextInput    (s_WIDGET *pWdgt, void* ptr);
+static BOOL    _DispTextInput    (s_WIDGET *pWdgt);
+static BOOL    _UpdateTextInput  (s_WIDGET *pWdgt, void* ptr);
+static BOOL    _DeleteTextInput  (s_WIDGET *pWdgt);
 
 //=============================================================================
 //--- DEFINITIONS
 //=============================================================================
 
 //-----------------------------------------------------------------------------
-// FONCTION    :  _NewRadioButton
+// FONCTION    :  _NewTextInput
 //
 // DESCRIPTION : Chargement du widget
 //-----------------------------------------------------------------------------
-static void *_NewRadioButton (e_WIDGET_MODE mode)
+static void *_NewTextInput (e_WIDGET_MODE mode)
 {
    UINT8 i;
-   s_WIDGET_RADIOBUTTON *pRet = NULL;
+   s_WIDGET_TEXT_INPUT *pRet = NULL;
 
-   if (_count < NB_RADIO_BUTTON_MAX)
+   if (_count < NB_TEXT_INPUT_MAX)
    {
       //--- Cherche un emplacement libre
-      for (i = 0; i < NB_RADIO_BUTTON_MAX; i++)
+      for (i = 0; i < NB_TEXT_INPUT_MAX; i++)
       {
-         if (_radioButton[i].used == FALSE)
+         if (_textInput[i].used == FALSE)
          {
             _count++;
-            _radioButton[i].used = TRUE;
-            pRet = &_radioButton[i];
+            _textInput[i].used = TRUE;
+            pRet = &_textInput[i];
             break;
          }
       }
@@ -81,32 +81,33 @@ static void *_NewRadioButton (e_WIDGET_MODE mode)
 }
 
 //-----------------------------------------------------------------------------
-// FONCTION    :  _InitRadioButton
+// FONCTION    :  _InitTextInput
 //
 // DESCRIPTION : Initialisation du widget
 //-----------------------------------------------------------------------------
-static BOOL _InitRadioButton (s_WIDGET *pWdgt, void* ptr)
+static BOOL _InitTextInput (s_WIDGET *pWdgt, void* ptr)
 {
-   s_WIDGET_RADIOBUTTON *pRadioButton = (s_WIDGET_RADIOBUTTON *)pWdgt->param;
-   s_WIDGET_RADIOBUTTON *param = (s_WIDGET_RADIOBUTTON *)ptr;
+   s_WIDGET_TEXT_INPUT *pTxtInput   = (s_WIDGET_TEXT_INPUT *)pWdgt->param;
+   s_WIDGET_TEXT_INPUT *param       = (s_WIDGET_TEXT_INPUT *)ptr;
 
-   //--- Affectation des parametres du widget
-   pRadioButton->currentValue    = param->currentValue;
-   pRadioButton->color           = param->color;
-   pRadioButton->backgroundColor = param->backgroundColor;
+   pTxtInput->color        = param->color;
+   pTxtInput->backColor    = param->backColor;
+   pTxtInput->width        = param->width;
+   pTxtInput->txtColor     = param->txtColor;
+   STRING_COPY(pTxtInput->str, param->str);
 
    return TRUE;
 }
 
 //-----------------------------------------------------------------------------
-// FONCTION    :  _DispRadioButton
+// FONCTION    :  _DispTextInput
 //
 // DESCRIPTION :
 //-----------------------------------------------------------------------------
-static BOOL _DispRadioButton (s_WIDGET *pWdgt)
+static BOOL _DispTextInput (s_WIDGET *pWdgt)
 {
    BOOL isDisp = FALSE;
-   s_WIDGET_RADIOBUTTON  *pSlide = (s_WIDGET_RADIOBUTTON *)pWdgt->param;
+   s_WIDGET_TEXT_INPUT *pTxtInput = (s_WIDGET_TEXT_INPUT *)pWdgt->param;
 
    switch (pWdgt->state)
    {
@@ -114,7 +115,7 @@ static BOOL _DispRadioButton (s_WIDGET *pWdgt)
       case TO_DISP_WIDGET_STATE :
       {
          //--- Affichage du widget
-         DISP_WDGT_ShowRadioButton(pWdgt->posX, pWdgt->posY, pSlide, pWdgt->isFirstTime);
+         DISP_WDGT_ShowTextInput(pWdgt->posX, pWdgt->posY, pTxtInput, pWdgt->isFirstTime);
          isDisp = TRUE;
          break;
       }
@@ -127,15 +128,15 @@ static BOOL _DispRadioButton (s_WIDGET *pWdgt)
 }
 
 //-----------------------------------------------------------------------------
-// FONCTION    :  _UpdateRadioButton
+// FONCTION    :  _UpdateTextInput
 //
 // DESCRIPTION :
 //-----------------------------------------------------------------------------
-static BOOL _UpdateRadioButton (s_WIDGET *pWdgt, void* ptr)
+static BOOL _UpdateTextInput (s_WIDGET *pWdgt, void* ptr)
 {
    //BOOL isEvent = FALSE;
    BOOL isUpdated = FALSE;
-   //s_WIDGET_RADIOBUTTON *pSlide = (s_WIDGET_SLIDE *)pWdgt->param;
+   //s_WIDGET_TEXT_INPUT *pButton = (s_WIDGET_TEXT_INPUT *)pWdgt->param;
 
    switch (pWdgt->state)
    {
@@ -161,31 +162,31 @@ static BOOL _UpdateRadioButton (s_WIDGET *pWdgt, void* ptr)
 }
 
 //-----------------------------------------------------------------------------
-// FONCTION    :  _DeleteRadioButton
+// FONCTION    :  _DeleteTextInput
 //
 // DESCRIPTION : Dechargement du widget
 //-----------------------------------------------------------------------------
-static BOOL _DeleteRadioButton (s_WIDGET *pWdgt)
+static BOOL _DeleteTextInput (s_WIDGET *pWdgt)
 {
    return TRUE;
 }
 
 //-----------------------------------------------------------------------------
-// FONCTION    :  WIDGET_RadioButtonGetDefaultFuncs
+// FONCTION    :  WIDGET_TextInputGetDefaultFuncs
 //
 // DESCRIPTION :  Recupere les pointers de fonctions par defaut du widget
 //-----------------------------------------------------------------------------
-BOOL WIDGET_RadioButtonGetDefaultFuncs (s_WIDGET *pWdgt)
+BOOL WIDGET_TextInputGetDefaultFuncs (s_WIDGET *pWdgt)
 {
    BOOL  isGeted = FALSE;
 
    if (pWdgt != NULL)
    {
-      pWdgt->func.new     = (void*)_NewRadioButton;
-      pWdgt->func.init    = _InitRadioButton;
-      pWdgt->func.disp    = _DispRadioButton;
-      pWdgt->func.update  = _UpdateRadioButton;
-      pWdgt->func.delete  = _DeleteRadioButton;
+      pWdgt->func.new     = (void*)_NewTextInput;
+      pWdgt->func.init    = _InitTextInput;
+      pWdgt->func.disp    = _DispTextInput;
+      pWdgt->func.update  = _UpdateTextInput;
+      pWdgt->func.delete  = _DeleteTextInput;
 
       isGeted = TRUE;
    }

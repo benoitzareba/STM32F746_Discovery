@@ -193,10 +193,3 @@ BOOL WIDGET_SlideGetDefaultFuncs (s_WIDGET *pWdgt)
 
    return isGeted;
 }
-
-#warning : debug
-void UPDATE_SLIDE_BAR (FLOAT32 valSlideBar)
-{
-   _slide[0].currentValue = valSlideBar;
-   _slide[1].currentValue = 100 - valSlideBar;
-}
