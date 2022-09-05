@@ -89,12 +89,32 @@ static BOOL _InitInputValue (s_WIDGET *pWdgt, void* ptr)
 {
    s_WIDGET_NUMBER_INPUT *pNumberInput = (s_WIDGET_NUMBER_INPUT *)pWdgt->param;
    s_WIDGET_NUMBER_INPUT *param = (s_WIDGET_NUMBER_INPUT *)ptr;
+   s_ACTIVE_ZONE* pZone;
 
+   //--- Initialisation du widget
    pNumberInput->width           = param->width;
    pNumberInput->height          = param->height;
    pNumberInput->backgroundColor = param->backgroundColor;
    pNumberInput->color           = param->color;
    pNumberInput->currentValue    = param->currentValue;
+
+   //--- Zone active pour le touchscreen
+   pZone                         = &pWdgt->activeZone;
+   pZone->nbActiveZone           = 2;
+
+   //--- Zone 1
+   pZone->zone[0].idFunc         = NUMBER_INPUT_MINUS_ONE;
+   pZone->zone[0].coord.x        = pWdgt->posX;
+   pZone->zone[0].coord.y        = pWdgt->posY;
+   pZone->zone[0].coord.width    = param->width * NUMBER_INPUT_BUTTON_PERCENT;
+   pZone->zone[0].coord.height   = param->height;
+
+   //--- Zone 2
+   pZone->zone[1].idFunc         = NUMBER_INPUT_PLUS_ONE;
+   pZone->zone[1].coord.x        = pWdgt->posX + param->width - (param->width * NUMBER_INPUT_BUTTON_PERCENT);
+   pZone->zone[1].coord.y        = pWdgt->posY;
+   pZone->zone[1].coord.width    = param->width * NUMBER_INPUT_BUTTON_PERCENT;
+   pZone->zone[1].coord.height   = param->height;
 
    return TRUE;
 }
@@ -134,23 +154,13 @@ static BOOL _DispInputValue (s_WIDGET *pWdgt)
 //-----------------------------------------------------------------------------
 static BOOL _UpdateInputValue (s_WIDGET *pWdgt, void* ptr)
 {
-   //BOOL isEvent = FALSE;
    BOOL isUpdated = FALSE;
-   //s_WIDGET_NUMBER_INPUT *pNumberInput = (s_WIDGET_NUMBER_INPUT *)pWdgt->param;
+   s_WIDGET_NUMBER_INPUT *pNumberInput = (s_WIDGET_NUMBER_INPUT *)pWdgt->param;
 
    switch (pWdgt->state)
    {
       case TO_DISP_AND_UPDATE_WIDGET_STATE :
       {
-         /*
-         isEvent = getevent ?
-
-         if (isEvent == TRUE)
-         {
-
-         }
-         isUpdated = TRUE;
-         */
          break;
       }
 

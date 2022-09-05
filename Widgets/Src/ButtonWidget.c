@@ -89,7 +89,9 @@ static BOOL _InitButton (s_WIDGET *pWdgt, void* ptr)
 {
    s_WIDGET_BUTTON *pButton   = (s_WIDGET_BUTTON *)pWdgt->param;
    s_WIDGET_BUTTON *param     = (s_WIDGET_BUTTON *)ptr;
+   s_ACTIVE_ZONE* pZone;
 
+   //--- Initialisation du widget
    pButton->color          = param->color;
    pButton->outlineColor   = param->outlineColor;
    pButton->height         = param->height;
@@ -97,6 +99,14 @@ static BOOL _InitButton (s_WIDGET *pWdgt, void* ptr)
    pButton->pressed        = FALSE;
    pButton->txtColor       = param->txtColor;
    STRING_COPY(pButton->str, param->str);
+
+   //--- Zone active pour le touchscreen
+   pZone                   = &pWdgt->activeZone;
+   pZone->nbActiveZone     = 1;
+   pZone->zone[0].coord.x       = pWdgt->posX;
+   pZone->zone[0].coord.y       = pWdgt->posY;
+   pZone->zone[0].coord.width   = pButton->width;
+   pZone->zone[0].coord.height  = pButton->height;
 
    return TRUE;
 }

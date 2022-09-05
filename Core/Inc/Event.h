@@ -34,6 +34,7 @@ extern osMessageQueueId_t BUTTON_Event;
 extern osMessageQueueId_t SCREEN_Event;
 extern osMessageQueueId_t CHANGE_SCREEN_Event;
 extern osMessageQueueId_t POPUP_Event;
+extern osMessageQueueId_t WIDGET_Event;
 
 //---------- Functions ----------
 void EVENT_Initialize (void);

@@ -98,6 +98,9 @@ static BOOL _InitCircleProgress (s_WIDGET *pWdgt, void* ptr)
    pCircleProgress->radius          = param->radius;
    pCircleProgress->dispVal         = param->dispVal;
 
+   //--- Zone active touchscreen
+   pWdgt->activeZone.nbActiveZone   = 0;
+
    return TRUE;
 }
 

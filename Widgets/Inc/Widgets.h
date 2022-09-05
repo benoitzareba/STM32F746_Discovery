@@ -20,7 +20,8 @@
 //-----------------------------------------------------------------------------
 // Constants : defines and enumerations
 //-----------------------------------------------------------------------------
-#define MAX_WIDGETS           16
+#define MAX_WIDGETS              16
+#define NB_ACTIVE_ZONE_MAX       2
 
 typedef enum
 {
@@ -61,11 +62,11 @@ typedef enum
 //-----------------------------------------------------------------------------
 struct WIDGET;
 
-typedef void *(*WIDGET_NEW_FUNC)    (void);
-typedef BOOL (*WIDGET_INIT_FUNC)    (struct WIDGET*, void*);
-typedef BOOL (*WIDGET_DISP_FUNC)    (struct WIDGET*);
-typedef BOOL (*WIDGET_UPDATE_FUNC)  (struct WIDGET*, void*);
-typedef BOOL (*WIDGET_DELETE_FUNC)  (struct WIDGET*);
+typedef void   *(*WIDGET_NEW_FUNC)     (void);
+typedef BOOL   (*WIDGET_INIT_FUNC)     (struct WIDGET*, void*);
+typedef BOOL   (*WIDGET_DISP_FUNC)     (struct WIDGET*);
+typedef BOOL   (*WIDGET_UPDATE_FUNC)   (struct WIDGET*, void*);
+typedef BOOL   (*WIDGET_DELETE_FUNC)   (struct WIDGET*);
 
 typedef struct
 {
@@ -74,9 +75,22 @@ typedef struct
    WIDGET_DISP_FUNC     disp;
    WIDGET_UPDATE_FUNC   update;
    WIDGET_DELETE_FUNC   delete;
+
 } s_WIDGET_FUNC;
 
-typedef struct WIDGET
+typedef struct
+{
+   UINT8    idFunc;
+   s_RECT   coord;
+} s_ZONE;
+
+typedef struct
+{
+   UINT8 nbActiveZone;
+   s_ZONE zone[NB_ACTIVE_ZONE_MAX];
+} s_ACTIVE_ZONE;
+
+typedef struct
 {
    UINT16               posX;
    UINT16               posY;
@@ -86,6 +100,7 @@ typedef struct WIDGET
    BOOL                 isUpToDate;
    BOOL                 isFirstTime;
    void*                param;
+   s_ACTIVE_ZONE        activeZone;
 } s_WIDGET;
 
 typedef struct  //--- s_WIDGET_TAB
@@ -102,12 +117,14 @@ typedef struct  //--- s_WIDGET_TAB
 //---------- Variables ----------
 
 //---------- Functions ----------
-void        WIDGET_GlobalInit (void);
-void*       WIDGET_Create     (s_WIDGET *pWdgt);
-BOOL        WIDGET_Init       (s_WIDGET *pWdgt, void *ptr);
-BOOL        WIDGET_Update     (s_WIDGET *pWdgt, void *event);
-BOOL        WIDGET_Display    (s_WIDGET *pWdgt);
-BOOL        WIDGET_Delete     (s_WIDGET *pWdgt);
-s_WIDGET*   WIDGET_Alloc      (e_WIDGET_TYPE type, e_WIDGET_MODE mode);
+void        WIDGET_GlobalInit             (void);
+void*       WIDGET_Create                 (s_WIDGET *pWdgt);
+BOOL        WIDGET_Init                   (s_WIDGET *pWdgt, void *ptr);
+BOOL        WIDGET_Update                 (s_WIDGET *pWdgt, void *event);
+BOOL        WIDGET_Display                (s_WIDGET *pWdgt);
+BOOL        WIDGET_Delete                 (s_WIDGET *pWdgt);
+s_WIDGET*   WIDGET_Alloc                  (e_WIDGET_TYPE type, e_WIDGET_MODE mode);
+BOOL        WIDGET_GetTouchActiveZone     (UINT16 posX, UINT16 posY, s_WIDGET** pWdgt);
+BOOL        WIDGET_GetTouchZoneFromWidget (UINT16 posX, UINT16 posY, s_WIDGET* pWdgt, s_ZONE **pZone);
 
 #endif

@@ -15,6 +15,7 @@
 //-----------------------------------------------------------------------------
 #include "Event.h"
 #include "Screen.h"
+#include "Widgets.h"
 
 //-----------------------------------------------------------------------------
 // Constants : defines and enumerations
@@ -23,11 +24,13 @@
 #define SCREEN_EVENT_BUFFER_SIZE             1
 #define CHANGE_SCREEN_EVENT_BUFFER_SIZE      1
 #define POPUP_EVENT_BUFFER_SIZE              1
+#define WIDGET_EVENT_BUFFER_SIZE             1
 
 #define BUTTON_EVENT_SIZE                    sizeof(BOOL)
 #define SCREEN_EVENT_SIZE                    sizeof(s_SCREEN)
 #define CHANGE_SCREEN_EVENT_SIZE             sizeof(STRING_TAB)
 #define POPUP_EVENT_SIZE                     sizeof(UINT8)
+#define WIDGET_EVENT_SIZE                    sizeof(s_WIDGET)
 
 //-----------------------------------------------------------------------------
 // Structures and types
@@ -50,6 +53,7 @@ osMessageQueueId_t BUTTON_Event        = NULL;
 osMessageQueueId_t SCREEN_Event        = NULL;
 osMessageQueueId_t CHANGE_SCREEN_Event = NULL;
 osMessageQueueId_t POPUP_Event         = NULL;
+osMessageQueueId_t WIDGET_Event        = NULL;
 
 //---------- Functions ----------
 
@@ -75,4 +79,7 @@ void EVENT_Initialize (void)
 
    //--- Popup event
    POPUP_Event = osMessageQueueNew(POPUP_EVENT_BUFFER_SIZE, POPUP_EVENT_SIZE, NULL);
+
+   //--- Widget event
+   WIDGET_Event = osMessageQueueNew(WIDGET_EVENT_BUFFER_SIZE, WIDGET_EVENT_SIZE, NULL);
 }

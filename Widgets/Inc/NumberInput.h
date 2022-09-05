@@ -20,6 +20,7 @@
 //-----------------------------------------------------------------------------
 // Constants : defines and enumerations
 //-----------------------------------------------------------------------------
+#define NUMBER_INPUT_BUTTON_PERCENT    0.25
 
 //-----------------------------------------------------------------------------
 // Structures and types
@@ -33,6 +34,12 @@ typedef struct
    INT16    currentValue;
    BOOL     used;
 } s_WIDGET_NUMBER_INPUT;
+
+enum
+{
+   NUMBER_INPUT_MINUS_ONE = 0,
+   NUMBER_INPUT_PLUS_ONE
+};
 
 //-----------------------------------------------------------------------------
 // External variables and functions

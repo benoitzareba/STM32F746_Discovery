@@ -30,6 +30,7 @@ typedef struct
    UINT32   baseColor;
    UINT32   backgroundColor;
    UINT16   length;
+   UINT8    radius;
    FLOAT32  currentValue;
    BOOL     used;
 } s_WIDGET_SLIDE_BAR;

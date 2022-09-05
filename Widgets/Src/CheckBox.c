@@ -89,11 +89,20 @@ static BOOL _InitCheckBox (s_WIDGET *pWdgt, void* ptr)
 {
    s_WIDGET_CHECKBOX *pCheckBox = (s_WIDGET_CHECKBOX *)pWdgt->param;
    s_WIDGET_CHECKBOX *param = (s_WIDGET_CHECKBOX *)ptr;
+   s_ACTIVE_ZONE* pZone;
 
    //--- Affectation des parametres du widget
    pCheckBox->currentValue    = param->currentValue;
    pCheckBox->color           = param->color;
    pCheckBox->backgroundColor = param->backgroundColor;
+
+   //--- Zone active pour le touchscreen
+   pZone                         = &pWdgt->activeZone;
+   pZone->nbActiveZone           = 1;
+   pZone->zone[0].coord.x        = pWdgt->posX;
+   pZone->zone[0].coord.y        = pWdgt->posY;
+   pZone->zone[0].coord.width    = CHECKBOX_WIDTH;
+   pZone->zone[0].coord.height   = CHECKBOX_HEIGHT;
 
    return TRUE;
 }

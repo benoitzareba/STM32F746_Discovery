@@ -20,6 +20,10 @@
 //-----------------------------------------------------------------------------
 // Constants : defines and enumerations
 //-----------------------------------------------------------------------------
+#define TOGGLE_SWITCH_RADIUS        10
+#define TOGGLE_SWITCH_OFFSET        18
+#define TOGGLE_SWITCH_WIDTH         TOGGLE_SWITCH_RADIUS + TOGGLE_SWITCH_OFFSET
+#define TOGGLE_SWITCH_HEIGHT        TOGGLE_SWITCH_RADIUS * 2 + 1
 
 //-----------------------------------------------------------------------------
 // Structures and types

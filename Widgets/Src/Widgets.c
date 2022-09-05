@@ -297,12 +297,11 @@ BOOL WIDGET_Update (s_WIDGET *pWdgt, void *event)
    if (pWdgt != NULL)
    {
       //--- Si on a un evenement a traiter et que le ctrl n'est pas de type dispOnly
-      /*
-      if (EVENT_HAS(pEvent) && (pWdgt->mode != WIDGET_DISPLAY_ONLY_MODE))
+      if (pWdgt->mode != WIDGET_DISPLAY_ONLY_MODE)
       {
          //--- Si le ctrl a une fonction d'update
-         if (pWdgt->funcs.update != NULL)
-            isUpdated |= pWdgt->funcs.update(pWdgt, event);
+         if (pWdgt->func.update != NULL)
+            isUpdated |= pWdgt->func.update(pWdgt, event);
 
          pWdgt->isUpToDate &= !isUpdated;
 
@@ -313,7 +312,6 @@ BOOL WIDGET_Update (s_WIDGET *pWdgt, void *event)
             WIDGET_Delete(pWdgt);
          }
       }
-      */
    }
 
    return isUpdated;
@@ -409,4 +407,76 @@ s_WIDGET *WIDGET_Alloc (e_WIDGET_TYPE type, e_WIDGET_MODE mode)
    }
 
    return pWdgt;
+}
+
+//-----------------------------------------------------------------------------
+// FONCTION    :  WIDGET_GetTouchActiveZone
+//
+// DESCRIPTION :  Determine si la zone touchee concerne la zone active d'un widget
+//-----------------------------------------------------------------------------
+BOOL WIDGET_GetTouchActiveZone (UINT16 posX, UINT16 posY, s_WIDGET** pWdgt)
+{
+   UINT8 i;
+   UINT8 j;
+   BOOL ret = FALSE;
+   s_RECT *pRect = NULL;
+
+   posX = 318;
+   posY = 90;
+
+   for (i = 0; i < MAX_WIDGETS; i++)
+   {
+      if (_widget[i].state == TO_UPDATE_WIDGET_STATE || _widget[i].state == TO_DISP_WIDGET_STATE || _widget[i].state == TO_DISP_AND_UPDATE_WIDGET_STATE)
+      {
+         for (j = 0; j < _widget[i].activeZone.nbActiveZone; j++)
+         {
+            pRect = &_widget[i].activeZone.zone[j].coord;
+
+            if (posX >= pRect->x && posX <= pRect->x + pRect->width && posY >= pRect->y && posY <= pRect->y + pRect->height)
+            {
+               *pWdgt = &_widget[i];
+               ret = TRUE;
+               break;
+            }
+         }
+
+         if (ret == TRUE)
+            break;
+      }
+   }
+
+   return ret;
+}
+
+//-----------------------------------------------------------------------------
+// FONCTION    :  WIDGET_GetTouchZoneFromWidget
+//
+// DESCRIPTION :  Recupere l'id de la zone touchee
+//-----------------------------------------------------------------------------
+BOOL WIDGET_GetTouchZoneFromWidget (UINT16 posX, UINT16 posY, s_WIDGET* pWdgt, s_ZONE **pZone)
+{
+   UINT8 i;
+   BOOL ret = FALSE;
+   s_RECT *pRect = NULL;
+
+   posX = 318;
+   posY = 90;
+
+   if (pWdgt->state == TO_UPDATE_WIDGET_STATE || pWdgt->state == TO_DISP_WIDGET_STATE || pWdgt->state == TO_DISP_AND_UPDATE_WIDGET_STATE)
+   {
+      for (i = 0; i < pWdgt->activeZone.nbActiveZone; i++)
+      {
+         pRect = &pWdgt->activeZone.zone[i].coord;
+
+         if (posX >= pRect->x && posX <= pRect->x + pRect->width && posY >= pRect->y && posY <= pRect->y + pRect->height)
+         {
+            *pZone = &pWdgt->activeZone.zone[i];
+
+            ret = TRUE;
+            break;
+         }
+      }
+   }
+
+   return ret;
 }

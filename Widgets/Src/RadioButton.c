@@ -89,11 +89,20 @@ static BOOL _InitRadioButton (s_WIDGET *pWdgt, void* ptr)
 {
    s_WIDGET_RADIOBUTTON *pRadioButton = (s_WIDGET_RADIOBUTTON *)pWdgt->param;
    s_WIDGET_RADIOBUTTON *param = (s_WIDGET_RADIOBUTTON *)ptr;
+   s_ACTIVE_ZONE* pZone;
 
    //--- Affectation des parametres du widget
    pRadioButton->currentValue    = param->currentValue;
    pRadioButton->color           = param->color;
    pRadioButton->backgroundColor = param->backgroundColor;
+
+   //--- Zone active pour le touchscreen
+   pZone                         = &pWdgt->activeZone;
+   pZone->nbActiveZone           = 1;
+   pZone->zone[0].coord.x        = pWdgt->posX;
+   pZone->zone[0].coord.y        = pWdgt->posY;
+   pZone->zone[0].coord.width    = RADIO_BUTTON_RADIUS;
+   pZone->zone[0].coord.height   = RADIO_BUTTON_RADIUS;
 
    return TRUE;
 }

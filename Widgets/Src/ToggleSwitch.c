@@ -19,7 +19,7 @@
 //-----------------------------------------------------------------------------
 // Constants : defines and enumerations
 //-----------------------------------------------------------------------------
-#define NB_TOGGLE_SWITCH_MAX      4
+#define NB_TOGGLE_SWITCH_MAX      8
 
 //-----------------------------------------------------------------------------
 // Structures and types
@@ -89,10 +89,20 @@ static BOOL _InitToggleSwitch (s_WIDGET *pWdgt, void* ptr)
 {
    s_WIDGET_TOGGLE_SWITCH *pToggleSwitch = (s_WIDGET_TOGGLE_SWITCH *)pWdgt->param;
    s_WIDGET_TOGGLE_SWITCH *param = (s_WIDGET_TOGGLE_SWITCH *)ptr;
+   s_ACTIVE_ZONE* pZone;
 
+   //--- Initialisation du toggle switch
    pToggleSwitch->colorOn        = param->colorOn;
    pToggleSwitch->colorOff       = param->colorOff;
    pToggleSwitch->currentValue   = param->currentValue;
+
+   //--- Zone active pour le touchscreen
+   pZone                         = &pWdgt->activeZone;
+   pZone->nbActiveZone           = 1;
+   pZone->zone[0].coord.x        = pWdgt->posX;
+   pZone->zone[0].coord.y        = pWdgt->posY;
+   pZone->zone[0].coord.width    = TOGGLE_SWITCH_WIDTH;
+   pZone->zone[0].coord.height   = TOGGLE_SWITCH_WIDTH;
 
    return TRUE;
 }

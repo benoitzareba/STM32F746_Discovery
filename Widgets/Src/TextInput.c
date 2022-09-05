@@ -89,12 +89,21 @@ static BOOL _InitTextInput (s_WIDGET *pWdgt, void* ptr)
 {
    s_WIDGET_TEXT_INPUT *pTxtInput   = (s_WIDGET_TEXT_INPUT *)pWdgt->param;
    s_WIDGET_TEXT_INPUT *param       = (s_WIDGET_TEXT_INPUT *)ptr;
+   s_ACTIVE_ZONE* pZone;
 
    pTxtInput->color        = param->color;
    pTxtInput->backColor    = param->backColor;
    pTxtInput->width        = param->width;
    pTxtInput->txtColor     = param->txtColor;
    STRING_COPY(pTxtInput->str, param->str);
+
+   //--- Zone active pour le touchscreen
+   pZone                         = &pWdgt->activeZone;
+   pZone->nbActiveZone           = 1;
+   pZone->zone[0].coord.x        = pWdgt->posX;
+   pZone->zone[0].coord.y        = pWdgt->posY;
+   pZone->zone[0].coord.width    = param->width;
+   pZone->zone[0].coord.height   = TEXT_INPUT_HEIGHT;
 
    return TRUE;
 }

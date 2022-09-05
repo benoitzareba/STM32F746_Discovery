@@ -89,12 +89,27 @@ static BOOL _InitSlide (s_WIDGET *pWdgt, void* ptr)
 {
    s_WIDGET_SLIDE_BAR *pSlide = (s_WIDGET_SLIDE_BAR *)pWdgt->param;
    s_WIDGET_SLIDE_BAR *param = (s_WIDGET_SLIDE_BAR *)ptr;
+   s_ACTIVE_ZONE* pZone;
+   FLOAT32 percentValue;
 
    pSlide->backgroundColor = param->backgroundColor;
    pSlide->baseColor       = param->baseColor;
    pSlide->color           = param->color;
    pSlide->currentValue    = param->currentValue;
    pSlide->length          = param->length;
+   pSlide->radius          = param->radius;
+
+   //--- Calcul zone active
+   percentValue = (FLOAT32)(pSlide->currentValue / 100.);
+   percentValue *= pSlide->length;
+
+   //--- Zone active pour le touchscreen
+   pZone                         = &pWdgt->activeZone;
+   pZone->nbActiveZone           = 1;
+   pZone->zone[0].coord.x        = pWdgt->posX + (UINT16)percentValue - pSlide->radius;
+   pZone->zone[0].coord.y        = pWdgt->posY - pSlide->radius;
+   pZone->zone[0].coord.width    = pSlide->radius * 2;
+   pZone->zone[0].coord.height   = pSlide->radius * 2;
 
    return TRUE;
 }

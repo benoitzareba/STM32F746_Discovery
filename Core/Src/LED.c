@@ -63,8 +63,9 @@ void LED_TaskRun (void *argument)
 {
    BOOL  receivedButtonState;
    osStatus_t eventStatus;
-
+#if 0
    BOOL slideM = TRUE;
+#endif
 
    //--- Remove compiler warning about unused parameter.
    (void)argument;
@@ -78,12 +79,13 @@ void LED_TaskRun (void *argument)
       {
          //--- Drive output led pin
          HAL_GPIO_WritePin(GPIOI, GPIO_PIN_1, receivedButtonState);
-
+#if 0
          if (receivedButtonState == TRUE)
          {
             SCREEN_UpdateSlideMenu(slideM);
             slideM = !slideM;
          }
+#endif
       }
    }
 }

@@ -18,6 +18,7 @@
 #include "Board.h"
 #include "I2C.h"
 #include "Event.h"
+#include "Widgets.h"
 
 //-----------------------------------------------------------------------------
 // Constants : defines and enumerations
@@ -449,6 +450,7 @@ UINT8 TOUCH_CheckPopupButton (s_POPUP* p, UINT16 posX, UINT16 posY)
 void TOUCH_TaskRun (void *argument)
 {
    TS_StateTypeDef tsState = {0};
+   BOOL touchScreenState = FALSE;
    s_SCREEN scr;
    s_FOOTER *f;
    s_POPUP *p;
@@ -456,6 +458,8 @@ void TOUCH_TaskRun (void *argument)
    UINT8 idItemPopup;
    UINT8 touchStateOld;
    osStatus_t eventStatus;
+   s_WIDGET *pWdgt = NULL;
+   s_ZONE *pZone = NULL;
 
    //--- Remove compiler warning about unused parameter.
    (void)argument;
@@ -467,15 +471,21 @@ void TOUCH_TaskRun (void *argument)
 
       if (eventStatus == osOK)
       {
+#warning: pour debug
+         //--- Recupere l'appui sur bouton physique
+         eventStatus = osMessageQueueGet(BUTTON_Event, &touchScreenState, NULL, 0);
+
          //--- Lecture de l'etat du touchscreen         TOUCH_GetState(&tsState);
 
          //--- S'il y a un mouvement
-         if (tsState.touchDetected != touchStateOld)
+         if (tsState.touchDetected != touchStateOld || touchScreenState == TRUE)
          {
-             touchStateOld = tsState.touchDetected;
+            touchStateOld = tsState.touchDetected;
 
-            if (tsState.touchDetected == 1)
+            if (tsState.touchDetected == 1 || touchScreenState == TRUE)
             {
+               touchScreenState = FALSE;
+
                if (scr.disp != SCREEN_DispPopup)
                {
                   //--- Pointeur footer
@@ -489,6 +499,17 @@ void TOUCH_TaskRun (void *argument)
                   {
                      //--- Changement d'ecran
                      osMessageQueuePut(CHANGE_SCREEN_Event, &f->button[idButtonFooter].function, 0, 0);
+                  }
+
+                  //--- Determine si l'appui se situe sur une zone active d'un widget
+                  if (WIDGET_GetTouchActiveZone(tsState.touchX[0], tsState.touchY[0], &pWdgt) == TRUE)
+                  {
+                     //--- Recupere la zone touchee
+                     if (WIDGET_GetTouchZoneFromWidget(tsState.touchX[0], tsState.touchY[0], pWdgt, &pZone) == TRUE)
+                     {
+                        osMessageQueuePut(WIDGET_Event, pWdgt, 0, 0);
+                        pWdgt = NULL;
+                     }
                   }
                }
                else if (scr.disp == SCREEN_DispPopup)

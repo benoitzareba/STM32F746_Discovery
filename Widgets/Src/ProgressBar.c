@@ -99,6 +99,9 @@ static BOOL _InitProgressBar (s_WIDGET *pWdgt, void* ptr)
    pProgressBar->outline         = param->outline;
    pProgressBar->cursorValue     = param->cursorValue;
 
+   //--- Zone active touchscreen
+   pWdgt->activeZone.nbActiveZone   = 0;
+
    return TRUE;
 }
 

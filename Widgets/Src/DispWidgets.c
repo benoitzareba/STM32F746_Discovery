@@ -68,7 +68,7 @@ void DISP_WDGT_ShowSlide (UINT16 posX, UINT16 posY, s_WIDGET_SLIDE_BAR *pSlide, 
    LCD_DrawHLineThickness(posX, posY, (UINT16)percentValue, 2);
 
    LCD_SetTextColor(pSlide->color);
-   LCD_DrawFilledCircle(posX + (UINT16)percentValue, posY, 7);
+   LCD_DrawFilledCircle(posX + (UINT16)percentValue, posY, pSlide->radius);
 }
 
 //-----------------------------------------------------------------------------
@@ -85,13 +85,13 @@ void DISP_WDGT_ShowToggleSwitch (UINT16 posX, UINT16 posY, s_WIDGET_TOGGLE_SWITC
 
    //--- Base du toggle
    LCD_SetTextColor(color);
-   LCD_DrawFilledCircle(posX, posY, 10);
-   LCD_DrawFilledCircle(posX + 18, posY, 10);
-   LCD_FillRect(posX + 2, posY - 10, 13, 21);
+   LCD_DrawFilledCircle(posX, posY, TOGGLE_SWITCH_RADIUS);
+   LCD_DrawFilledCircle(posX + 18, posY, TOGGLE_SWITCH_RADIUS);
+   LCD_FillRect(posX + 2, posY - TOGGLE_SWITCH_RADIUS, TOGGLE_SWITCH_OFFSET - 5, TOGGLE_SWITCH_HEIGHT);
 
    //--- Position du toggle switch
    LCD_SetTextColor(LCD_COLOR_WHITE);
-   LCD_DrawFilledCircle((pToggleSwitch->currentValue == FALSE) ? posX : posX + 18, posY, 8);
+   LCD_DrawFilledCircle((pToggleSwitch->currentValue == FALSE) ? posX : posX + TOGGLE_SWITCH_OFFSET, posY, TOGGLE_SWITCH_RADIUS - 2);
 }
 
 //-----------------------------------------------------------------------------
@@ -105,16 +105,16 @@ void DISP_WDGT_ShowRadioButton (UINT16 posX, UINT16 posY, s_WIDGET_RADIOBUTTON *
    {
       //--- Contour du bouton radio
       LCD_SetTextColor(pRadioButton->color);
-      LCD_DrawFilledCircle(posX, posY, 8);
+      LCD_DrawFilledCircle(posX, posY, RADIO_BUTTON_RADIUS);
    }
 
    LCD_SetTextColor(pRadioButton->backgroundColor);
-   LCD_DrawFilledCircle(posX, posY, 7);
+   LCD_DrawFilledCircle(posX, posY, RADIO_BUTTON_RADIUS - 1);
 
    if (pRadioButton->currentValue == TRUE)
    {
       LCD_SetTextColor(pRadioButton->color);
-      LCD_DrawFilledCircle(posX, posY, 6);
+      LCD_DrawFilledCircle(posX, posY, RADIO_BUTTON_RADIUS - 2);
    }
 }
 
@@ -153,7 +153,7 @@ void DISP_WDGT_ShowNumberInput (UINT16 posX, UINT16 posY, s_WIDGET_NUMBER_INPUT 
    UINT16 lenStr;
    STRING_TAB valStr;
 
-   widthButton = (UINT16)((FLOAT32)(pNumberInput->width) * 0.25);
+   widthButton = (UINT16)((FLOAT32)(pNumberInput->width) * NUMBER_INPUT_BUTTON_PERCENT);
 
    if (isFirstTime == TRUE)
    {
@@ -175,7 +175,6 @@ void DISP_WDGT_ShowNumberInput (UINT16 posX, UINT16 posY, s_WIDGET_NUMBER_INPUT 
       LCD_DisplayStringAt(posX + pNumberInput->width - widthButton + ((widthButton / 2) - (LCD_FONT_24.Width / 2)), posY + ((pNumberInput->height / 2) - (LCD_FONT_24.Height / 2)) + 2, (STRING)"+\0", LEFT_MODE);
    }
 
-   //STRING_FORMAT(valStr, "%u", pNumberInput->currentValue);
    if (pNumberInput->currentValue == 0)
       lenStr = 1;
    else if (pNumberInput->currentValue == 100)

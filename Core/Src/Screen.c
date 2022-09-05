@@ -313,6 +313,7 @@ BOOL SCREEN_DispScr1 (void *p)
             slideParam.backgroundColor          = LCD_COLOR_BACKGROUND_ITEM;
             slideParam.currentValue             = 25.;
             slideParam.length                   = 150;
+            slideParam.radius                   = 7;
 
             //--- Slide widget
             slideParam2.color                   = LCD_COLOR_LIGHTCYAN;
@@ -320,6 +321,7 @@ BOOL SCREEN_DispScr1 (void *p)
             slideParam2.backgroundColor         = LCD_COLOR_BACKGROUND_ITEM;
             slideParam2.currentValue            = 75.;
             slideParam2.length                  = 70;
+            slideParam2.radius                  = 5;
 
             //--- Toggle switch widget
             toggleSwitchParam.colorOff          = LCD_COLOR_GRAY;
@@ -444,6 +446,27 @@ BOOL SCREEN_DispScr1 (void *p)
 
       case AFTER_SCREEN_STATE:
       {
+         //--- Slide widget
+         WIDGET_Delete(_slideWidget);
+         WIDGET_Delete(_slideWidget2);
+
+         //--- Toggle switch widget
+         WIDGET_Delete(_toggleSwitchWidget);
+         WIDGET_Delete(_toggleSwitchWidget2);
+         WIDGET_Delete(_toggleSwitchWidget3);
+         WIDGET_Delete(_toggleSwitchWidget4);
+
+         //--- Radio button widget
+         WIDGET_Delete(_radioButtonWidget);
+         WIDGET_Delete(_radioButtonWidget2);
+         WIDGET_Delete(_radioButtonWidget3);
+         WIDGET_Delete(_radioButtonWidget4);
+
+         //--- Checkbox widget
+         WIDGET_Delete(_checkBoxWidget);
+         WIDGET_Delete(_checkBoxWidget2);
+         WIDGET_Delete(_checkBoxWidget3);
+         WIDGET_Delete(_checkBoxWidget4);
          break;
       }
 
@@ -604,6 +627,11 @@ BOOL SCREEN_DispScr2 (void *p)
 
       case AFTER_SCREEN_STATE:
       {
+         WIDGET_Delete(_numberInputWidget);
+         WIDGET_Delete(_circleProgressWidget);
+         WIDGET_Delete(_circleProgressWidget2);
+         WIDGET_Delete(_circleProgressWidget3);
+         WIDGET_Delete(_circleProgressWidget4);
          break;
       }
 
@@ -764,6 +792,11 @@ BOOL SCREEN_DispScr3 (void *p)
 
       case AFTER_SCREEN_STATE:
       {
+         WIDGET_Delete(_progressBarWidget);
+         WIDGET_Delete(_progressBarWidget2);
+         WIDGET_Delete(_progressBarWidget3);
+         WIDGET_Delete(_progressBarWidget4);
+         WIDGET_Delete(_progressBarWidget5);
          break;
       }
 
@@ -932,6 +965,19 @@ BOOL SCREEN_DispScr4 (void *p)
 
       case AFTER_SCREEN_STATE:
       {
+         WIDGET_Delete(_ButtonWidget);
+         WIDGET_Delete(_ButtonWidget2);
+         WIDGET_Delete(_ButtonWidget3);
+         WIDGET_Delete(_ButtonWidget4);
+         WIDGET_Delete(_ButtonWidget5);
+         WIDGET_Delete(_ButtonWidget6);
+         WIDGET_Delete(_ButtonWidget7);
+         WIDGET_Delete(_ButtonWidget8);
+         WIDGET_Delete(_ButtonWidget9);
+         WIDGET_Delete(_ButtonWidget0);
+         WIDGET_Delete(_ButtonWidgetClear);
+         WIDGET_Delete(_ButtonWidgetEnter);
+         WIDGET_Delete(_TextInputWidget);
          break;
       }
 
@@ -1079,6 +1125,13 @@ BOOL SCREEN_LoadNext (s_SCREEN *s, CHAR8* menuName)
 {
    BOOL success = FALSE;
    BOOL screenLoaded = FALSE;
+
+   //--- Dechargement de l'ecran en cours
+   if (s->disp != NULL)
+   {
+      s->state = AFTER_SCREEN_STATE;
+      s->disp(s);
+   }
 
    //--- Chargement de l'ecran
    screenLoaded = SCREEN_LoadAndUpdate(menuName, s);
@@ -1255,7 +1308,7 @@ void SCREEN_Initialize (void)
    WIDGET_GlobalInit();
 
    //--- Load first screen
-   SCREEN_LoadNext(&_curScr, (STRING)"DispScreen4");
+   SCREEN_LoadNext(&_curScr, (STRING)"DispScreen2");
 }
 
 //-----------------------------------------------------------------------------
@@ -1265,9 +1318,10 @@ void SCREEN_Initialize (void)
 //-----------------------------------------------------------------------------
 void SCREEN_TaskRun (void *argument)
 {
-   STRING_TAB function;
-   UINT8 idItem = NO_TOUCH_ITEM;
-   osStatus_t eventStatus;
+   STRING_TAB  function;
+   UINT8       idItem = NO_TOUCH_ITEM;
+   s_WIDGET    widget;
+   osStatus_t  eventStatus;
 
    //--- Remove compiler warning about unused parameter.
    (void)argument;
@@ -1285,6 +1339,12 @@ void SCREEN_TaskRun (void *argument)
       if (eventStatus == osOK)
       {
          SCREEN_Update(&_curScr, &idItem);
+      }
+
+      eventStatus = osMessageQueueGet(WIDGET_Event, &widget, NULL, 0);
+      if (eventStatus == osOK)
+      {
+         WIDGET_Update(&widget, NULL);
       }
 
       //--- Send current screen to touchscreen task
