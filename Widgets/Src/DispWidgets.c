@@ -151,7 +151,7 @@ void DISP_WDGT_ShowNumberInput (UINT16 posX, UINT16 posY, s_WIDGET_NUMBER_INPUT 
 {
    UINT16 widthButton;
    UINT16 lenStr;
-   STRING_TAB valStr;
+   CHAR8 valStr[MAX_CHARS_STRING];
 
    widthButton = (UINT16)((FLOAT32)(pNumberInput->width) * NUMBER_INPUT_BUTTON_PERCENT);
 
@@ -207,17 +207,22 @@ void DISP_WDGT_ShowCircleProgress (UINT16 posX, UINT16 posY, s_WIDGET_CIRCLE_PRO
    UINT8 i;
    UINT32 color;
 
+   //--- Si premier affichage
    if (isFirstTime == TRUE)
    {
       LCD_DrawProgressCircle(posX, posY, 0.85, 0, 100, pCircleProgress->radius, pCircleProgress->backgroundColor);
       //LCD_DrawProgressCircle(posX, posY, 0.85, 0, pCircleProgress->currentValue, pCircleProgress->radius, pCircleProgress->color);
    }
-   else
+   else //--- Sinon, affichage avec valeurs courantes
    {
-      color = (pCircleProgress->currentValue < pCircleProgress->oldValue) ? pCircleProgress->backgroundColor : pCircleProgress->color;
-      LCD_DrawProgressCircle(posX, posY, 0.85, pCircleProgress->oldValue, pCircleProgress->currentValue, pCircleProgress->radius, color);
+	   //--- Selon si la valeur est inferieure ou superieure, on determine la couleur
+	   color = (pCircleProgress->currentValue < pCircleProgress->oldValue) ? pCircleProgress->backgroundColor : pCircleProgress->color;
+
+	   //--- Affichage
+	   LCD_DrawProgressCircle(posX, posY, 0.85, pCircleProgress->oldValue, pCircleProgress->currentValue, pCircleProgress->radius, color);
    }
 
+   //--- Traitement pour affichage de la valeur en pourcentage
    if (pCircleProgress->dispVal == TRUE)
    {
       LCD_SetFont(&LCD_FONT_12);
@@ -258,7 +263,7 @@ void DISP_WDGT_ShowCircleProgress (UINT16 posX, UINT16 posY, s_WIDGET_CIRCLE_PRO
 //-----------------------------------------------------------------------------
 void DISP_WDGT_ShowProgressBar (UINT16 posX, UINT16 posY, s_WIDGET_PROGRESS_BAR *pProgressBar, BOOL isFirstTime)
 {
-   static STRING_TAB strTmp;
+   static CHAR8 strTmp[MAX_CHARS_STRING];
    UINT16 posCursor;
    UINT16 heightVal;
    static UINT8 len;

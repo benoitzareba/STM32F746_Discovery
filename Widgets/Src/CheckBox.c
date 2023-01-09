@@ -176,7 +176,29 @@ static BOOL _UpdateCheckBox (s_WIDGET *pWdgt, void* ptr)
 //-----------------------------------------------------------------------------
 static BOOL _DeleteCheckBox (s_WIDGET *pWdgt)
 {
-   return TRUE;
+	BOOL status = FALSE;
+	UINT8 i;
+	s_WIDGET_CHECKBOX *pCompare = (s_WIDGET_CHECKBOX*)pWdgt->param;
+
+	//--- Determine le widget a supprimer
+	for (i = 0; i < NB_CHECKBOX_MAX; i++)
+	{
+		//--- S'il y a une correspondance
+		if (&_checkBox[i] == pCompare)
+		{
+			//--- On le libere
+			_checkBox[i].used = FALSE;
+
+			//--- On decremente le nombre de widget utilise
+			if (_count > 0)
+				_count--;
+
+			status = TRUE;
+			break;
+		}
+	}
+
+	return status;
 }
 
 //-----------------------------------------------------------------------------

@@ -173,7 +173,29 @@ static BOOL _UpdateCircleProgress (s_WIDGET *pWdgt, void* ptr)
 //-----------------------------------------------------------------------------
 static BOOL _DeleteCircleProgress (s_WIDGET *pWdgt)
 {
-   return TRUE;
+	BOOL status = FALSE;
+	UINT8 i;
+	s_WIDGET_CIRCLE_PROGRESS *pCompare = (s_WIDGET_CIRCLE_PROGRESS*)pWdgt->param;
+
+	//--- Determine le widget a supprimer
+	for (i = 0; i < NB_CIRCLE_PROGRESS_MAX; i++)
+	{
+		//--- S'il y a une correspondance
+		if (&_circleProgress[i] == pCompare)
+		{
+			//--- On le libere
+			_circleProgress[i].used = FALSE;
+
+			//--- On decremente le nombre de widget utilise
+			if (_count > 0)
+				_count--;
+
+			status = TRUE;
+			break;
+		}
+	}
+
+   return status;
 }
 
 //-----------------------------------------------------------------------------

@@ -178,7 +178,29 @@ static BOOL _UpdateInputValue (s_WIDGET *pWdgt, void* ptr)
 //-----------------------------------------------------------------------------
 static BOOL _DeleteInputValue (s_WIDGET *pWdgt)
 {
-   return TRUE;
+	BOOL status = FALSE;
+	UINT8 i;
+	s_WIDGET_NUMBER_INPUT *pCompare = (s_WIDGET_NUMBER_INPUT*)pWdgt->param;
+
+	//--- Determine le widget a supprimer
+	for (i = 0; i < NB_NUMBER_INPUT_MAX; i++)
+	{
+		//--- S'il y a une correspondance
+		if (&_numberInput[i] == pCompare)
+		{
+			//--- On le libere
+			_numberInput[i].used = FALSE;
+
+			//--- On decremente le nombre de widget utilise
+			if (_count > 0)
+				_count--;
+
+			status = TRUE;
+			break;
+		}
+	}
+
+	return status;
 }
 
 //-----------------------------------------------------------------------------

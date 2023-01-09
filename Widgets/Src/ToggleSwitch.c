@@ -176,7 +176,29 @@ static BOOL _UpdateToggleSwitch (s_WIDGET *pWdgt, void* ptr)
 //-----------------------------------------------------------------------------
 static BOOL _DeleteToggleSwitch (s_WIDGET *pWdgt)
 {
-   return TRUE;
+	BOOL status = FALSE;
+	UINT8 i;
+	s_WIDGET_TOGGLE_SWITCH *pCompare = (s_WIDGET_TOGGLE_SWITCH*)pWdgt->param;
+
+	//--- Determine le widget a supprimer
+	for (i = 0; i < NB_TOGGLE_SWITCH_MAX; i++)
+	{
+		//--- S'il y a une correspondance
+		if (&_toggleSwitch[i] == pCompare)
+		{
+			//--- On le libere
+			_toggleSwitch[i].used = FALSE;
+
+			//--- On decremente le nombre de widget utilise
+			if (_count > 0)
+				_count--;
+
+			status = TRUE;
+			break;
+		}
+	}
+
+	return status;
 }
 
 //-----------------------------------------------------------------------------

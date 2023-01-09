@@ -1181,6 +1181,7 @@ void LCD_DrawProgressCircle (UINT16 posX, UINT16 posY, FLOAT32 width, UINT8 from
    FLOAT32 to;
    FLOAT32 x0, y0, x1, y1;
 
+   //--- Calculs selon la nouvelle valeur a afficher
    if (fromProgress <= toProgress)
    {
       from = fromProgress * step - (M_PI/2);
@@ -1188,12 +1189,14 @@ void LCD_DrawProgressCircle (UINT16 posX, UINT16 posY, FLOAT32 width, UINT8 from
    }
    else
    {
-      from = toProgress * step -(M_PI/2);
+      from = toProgress * step - (M_PI/2);
       to = fromProgress * step - (M_PI/2);
    }
 
+   //--- Dessine les lignes pour construire le cercle
    for (angle = from; angle < to; angle += 0.01)
    {
+	   //--- calculs des 2 points de la ligne
       x0 = radius * cos(angle);
       y0 = radius * sin(angle);
 

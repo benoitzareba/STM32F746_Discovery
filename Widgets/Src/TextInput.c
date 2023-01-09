@@ -177,7 +177,29 @@ static BOOL _UpdateTextInput (s_WIDGET *pWdgt, void* ptr)
 //-----------------------------------------------------------------------------
 static BOOL _DeleteTextInput (s_WIDGET *pWdgt)
 {
-   return TRUE;
+	BOOL status = FALSE;
+	UINT8 i;
+	s_WIDGET_TEXT_INPUT *pCompare = (s_WIDGET_TEXT_INPUT*)pWdgt->param;
+
+	//--- Determine le widget a supprimer
+	for (i = 0; i < NB_TEXT_INPUT_MAX; i++)
+	{
+		//--- S'il y a une correspondance
+		if (&_textInput[i] == pCompare)
+		{
+			//--- On le libere
+			_textInput[i].used = FALSE;
+
+			//--- On decremente le nombre de widget utilise
+			if (_count > 0)
+				_count--;
+
+			status = TRUE;
+			break;
+		}
+	}
+
+	return status;
 }
 
 //-----------------------------------------------------------------------------

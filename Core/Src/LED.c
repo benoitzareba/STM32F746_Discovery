@@ -63,6 +63,9 @@ void LED_TaskRun (void *argument)
 {
    BOOL  receivedButtonState;
    osStatus_t eventStatus;
+   UINT8 cpt = 3;
+   CHAR8 txt[] = {"DispScreen1\0"};
+
 #if 0
    BOOL slideM = TRUE;
 #endif
@@ -79,6 +82,19 @@ void LED_TaskRun (void *argument)
       {
          //--- Drive output led pin
          HAL_GPIO_WritePin(GPIOI, GPIO_PIN_1, receivedButtonState);
+
+#warning pour debug
+         //--- Sur appui du bouton user
+         if (receivedButtonState == 1)
+         {
+        	 //--- changement d'ecran
+			 txt[10] = cpt + '0';
+			 osMessageQueuePut(CHANGE_SCREEN_Event, &txt, 0, 0);
+			 cpt++;
+			 if (cpt > 4)
+				 cpt = 1;
+         }
+
 #if 0
          if (receivedButtonState == TRUE)
          {

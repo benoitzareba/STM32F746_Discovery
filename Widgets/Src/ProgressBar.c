@@ -113,7 +113,7 @@ static BOOL _InitProgressBar (s_WIDGET *pWdgt, void* ptr)
 static BOOL _DispProgressBar (s_WIDGET *pWdgt)
 {
    BOOL isDisp = FALSE;
-   s_WIDGET_SLIDE_BAR  *pSlide = (s_WIDGET_SLIDE_BAR *)pWdgt->param;
+   s_WIDGET_PROGRESS_BAR  *pProgressBar = (s_WIDGET_PROGRESS_BAR *)pWdgt->param;
 
    switch (pWdgt->state)
    {
@@ -121,7 +121,7 @@ static BOOL _DispProgressBar (s_WIDGET *pWdgt)
       case TO_DISP_WIDGET_STATE :
       {
          //--- Affichage du widget
-         DISP_WDGT_ShowProgressBar(pWdgt->posX, pWdgt->posY, pSlide, pWdgt->isFirstTime);
+         DISP_WDGT_ShowProgressBar(pWdgt->posX, pWdgt->posY, pProgressBar, pWdgt->isFirstTime);
          isDisp = TRUE;
          break;
       }
@@ -174,7 +174,29 @@ static BOOL _UpdateProgressBar (s_WIDGET *pWdgt, void* ptr)
 //-----------------------------------------------------------------------------
 static BOOL _DeleteProgressBar (s_WIDGET *pWdgt)
 {
-   return TRUE;
+	BOOL status = FALSE;
+	UINT8 i;
+	s_WIDGET_PROGRESS_BAR *pCompare = (s_WIDGET_PROGRESS_BAR*)pWdgt->param;
+
+	//--- Determine le widget a supprimer
+	for (i = 0; i < NB_PROGRESS_BAR_MAX; i++)
+	{
+		//--- S'il y a une correspondance
+		if (&_progressBar[i] == pCompare)
+		{
+			//--- On le libere
+			_progressBar[i].used = FALSE;
+
+			//--- On decremente le nombre de widget utilise
+			if (_count > 0)
+				_count--;
+
+			status = TRUE;
+			break;
+		}
+	}
+
+	return status;
 }
 
 //-----------------------------------------------------------------------------

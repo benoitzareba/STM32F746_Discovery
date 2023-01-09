@@ -180,7 +180,29 @@ static BOOL _UpdateButton (s_WIDGET *pWdgt, void* ptr)
 //-----------------------------------------------------------------------------
 static BOOL _DeleteButton (s_WIDGET *pWdgt)
 {
-   return TRUE;
+	BOOL status = FALSE;
+	UINT8 i;
+	s_WIDGET_BUTTON *pCompare = (s_WIDGET_BUTTON*)pWdgt->param;
+
+	//--- Determine le widget a supprimer
+	for (i = 0; i < NB_BUTTON_MAX; i++)
+	{
+		//--- S'il y a une correspondance
+		if (&_button[i] == pCompare)
+		{
+			//--- On le libere
+			_button[i].used = FALSE;
+
+			//--- On decremente le nombre de widget utilise
+			if (_count > 0)
+				_count--;
+
+			status = TRUE;
+			break;
+		}
+	}
+
+   return status;
 }
 
 //-----------------------------------------------------------------------------
